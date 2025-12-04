@@ -1,4 +1,4 @@
-﻿﻿using System.ComponentModel.DataAnnotations;
+﻿﻿﻿using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Reflection;
 
@@ -22,26 +22,28 @@ public class DataComparator {
     /// <param name="newData">新的数据集合（待导入或最新版本）</param>
     /// <param name="oldData">原有的数据集合（现有数据或旧版本）</param>
     /// <param name="keySelector">主键选择器，用于确定对象的唯一标识</param>
+    /// <param name="progress">进度报告器（可选）</param>
     /// <returns>返回包含所有差异对象的列表</returns>
     /// <exception cref="Exception">当数据主键不唯一时抛出异常</exception>
-    public static async Task<List<DifferentObject<TKey>>> ComparerAsync<T, TKey>(IEnumerable<T> newData, IEnumerable<T> oldData, Func<T, TKey> keySelector) where T : class {
+    public static async Task<List<DifferentObject<TKey>>> ComparerAsync<T, TKey>(IEnumerable<T> newData, IEnumerable<T> oldData, Func<T, TKey> keySelector, IProgress<int>? progress = null) where T : class {
         return await Task.Run(() => {
-            // 优化：将输入数据转换为列表，避免多次枚举
-            var newList = newData.ToList();
-            var oldList = oldData.ToList();
+            // 优化：直接使用IEnumerable，避免提前ToList导致的内存占用
+            // 只在需要多次枚举的地方转换为列表
             
             // 数据校验：确保主键唯一性，使用HashSet提高性能
             var oldKeys = new HashSet<TKey>();
             var newKeys = new HashSet<TKey>();
             
-            foreach (var item in oldList) {
+            // 检查旧数据主键唯一性
+            foreach (var item in oldData) {
                 var key = keySelector(item);
                 if (!oldKeys.Add(key)) {
                     throw new Exception("原始数据主键不唯一,无法对比，但仍然可以导入！");
                 }
             }
             
-            foreach (var item in newList) {
+            // 检查新数据主键唯一性
+            foreach (var item in newData) {
                 var key = keySelector(item);
                 if (!newKeys.Add(key)) {
                     throw new Exception("导入数据主键不唯一,无法对比，但仍然可以导入！");
@@ -56,12 +58,16 @@ public class DataComparator {
             
             var diffList = new List<DifferentObject<TKey>>();
 
-            // 创建字典以提高查找性能
-            var oldItemDict = oldList.ToDictionary(keySelector);
-            var newItemDict = newList.ToDictionary(keySelector);
+            // 创建字典以提高查找性能（只转换一次）
+            var oldItemDict = oldData.ToDictionary(keySelector);
+            var newItemList = newData.ToList(); // 只转换一次新数据
+            var newItemDict = newItemList.ToDictionary(keySelector);
+
+            int totalSteps = 3; // 三个主要阶段
+            int currentStep = 0;
 
             // 阶段1：处理新增数据（在新数据中存在，但在旧数据中不存在）
-            foreach (var item in newList) {
+            foreach (var item in newItemList) {
                 var key = keySelector(item);
                 if (!oldItemDict.ContainsKey(key)) {
                     var diffObject = new DifferentObject<TKey>() { Key = key, Type = DifferentType.新增 };
@@ -72,46 +78,56 @@ public class DataComparator {
                             NewValue = prop.Prop.GetValue(item),
                             PropName = prop.Name
                         })
-                        .Where(x => !string.IsNullOrEmpty($"{x.NewValue}"))
+                        .Where(x => x.NewValue != null && !string.IsNullOrEmpty(x.NewValue.ToString()))
                         .ToList();
                     diffObject.DiffProps.AddRange(diffProps);
                     diffList.Add(diffObject);
                 }
             }
+            currentStep++;
+            progress?.Report((currentStep * 100) / totalSteps);
 
             // 阶段2：处理删除数据（在旧数据中存在，但在新数据中不存在）
-            foreach (var item in oldList) {
-                var key = keySelector(item);
-                if (!newItemDict.ContainsKey(key)) {
+            foreach (var key in oldKeys) {
+                if (!newKeys.Contains(key)) {
+                    var oldItem = oldItemDict[key];
                     var diffObject = new DifferentObject<TKey>() { Key = key, Type = DifferentType.移除 };
                     // 只记录非空属性的旧值
                     var diffProps = props
                         .Select(prop => new DifferentProperty() {
                             NewValue = null,
-                            OldValue = prop.Prop.GetValue(item),
+                            OldValue = prop.Prop.GetValue(oldItem),
                             PropName = prop.Name
                         })
-                        .Where(x => !string.IsNullOrEmpty($"{x.OldValue}"))
+                        .Where(x => x.OldValue != null && !string.IsNullOrEmpty(x.OldValue.ToString()))
                         .ToList();
                     diffObject.DiffProps.AddRange(diffProps);
                     diffList.Add(diffObject);
                 }
             }
+            currentStep++;
+            progress?.Report((currentStep * 100) / totalSteps);
 
             // 阶段3：处理修改数据（在两个数据集合中都存在，但属性值可能不同）
-            foreach (var oldItem in oldList) {
+            foreach (var oldItem in oldItemDict.Values) {
                 var key = keySelector(oldItem);
                 if (newItemDict.TryGetValue(key, out var newItem)) {
                     var diffObject = new DifferentObject<TKey>() { Key = key, Type = DifferentType.覆盖 };
                     // 只记录值发生变化的属性
-                    var diffProps = props
-                        .Select(prop => new DifferentProperty() {
-                            NewValue = prop.Prop.GetValue(newItem),
-                            OldValue = prop.Prop.GetValue(oldItem),
-                            PropName = prop.Name
-                        })
-                        .Where(x => !Equals(x.OldValue, x.NewValue))
-                        .ToList();
+                    var diffProps = new List<DifferentProperty>();
+                    
+                    foreach (var prop in props) {
+                        var oldValue = prop.Prop.GetValue(oldItem);
+                        var newValue = prop.Prop.GetValue(newItem);
+                        
+                        if (!Equals(oldValue, newValue)) {
+                            diffProps.Add(new DifferentProperty() {
+                                NewValue = newValue,
+                                OldValue = oldValue,
+                                PropName = prop.Name
+                            });
+                        }
+                    }
                     
                     if (diffProps.Count > 0) {
                         diffObject.DiffProps.AddRange(diffProps);
@@ -119,6 +135,8 @@ public class DataComparator {
                     }
                 }
             }
+            currentStep++;
+            progress?.Report((currentStep * 100) / totalSteps);
 
             return diffList;
         });
