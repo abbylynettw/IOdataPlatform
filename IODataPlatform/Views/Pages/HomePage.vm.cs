@@ -1,4 +1,4 @@
-﻿﻿using IODataPlatform.Models;
+using IODataPlatform.Models;
 using LYSoft.Libs.ServiceInterfaces;
 using System;
 using System.Collections.Generic;
@@ -11,6 +11,9 @@ using Microsoft.Extensions.Options;
 using IODataPlatform.Models.DBModels;
 using IODataPlatform.Services;
 using System.IO;
+using System.Net.Http;
+using System.Text.Json;
+using System.Windows.Threading;
 
 namespace IODataPlatform.Views.Pages
 {
@@ -33,6 +36,67 @@ namespace IODataPlatform.Views.Pages
         /// <summary>当前应用程序的版本号信息</summary>
         [ObservableProperty]
         public string appVersion;
+
+        /// <summary>项目数量</summary>
+        [ObservableProperty]
+        public int projectCount;
+
+        /// <summary>IO配置数量</summary>
+        [ObservableProperty]
+        public int ioCount;
+
+        /// <summary>电缆数量</summary>
+        [ObservableProperty]
+        public int cableCount;
+
+        /// <summary>
+        /// 启动计数动画
+        /// </summary>
+        private void StartCountAnimation()
+        {
+            AnimateCount(0, ProjectCount, (value) => ProjectCount = value);
+            AnimateCount(0, IoCount, (value) => IoCount = value);
+            AnimateCount(0, CableCount, (value) => CableCount = value);
+        }
+
+        /// <summary>
+        /// 执行单个计数动画
+        /// </summary>
+        /// <param name="startValue">起始值</param>
+        /// <param name="endValue">结束值</param>
+        /// <param name="updateCallback">更新回调函数</param>
+        private void AnimateCount(int startValue, int endValue, Action<int> updateCallback)
+        {
+            if (endValue == 0)
+            {
+                updateCallback?.Invoke(0);
+                return;
+            }
+
+            var timer = new DispatcherTimer();
+            int currentValue = startValue;
+
+            // 计算动画持续时间（根据结束值动态调整，确保动画速度一致）
+            int durationMilliseconds = Math.Min(2000, Math.Max(500, endValue / 2));
+            int steps = durationMilliseconds / 20; // 每20毫秒更新一次
+            int stepValue = endValue / steps;
+
+            timer.Interval = TimeSpan.FromMilliseconds(20);
+            timer.Tick += (sender, e) =>
+            {
+                currentValue += stepValue;
+                
+                if (currentValue >= endValue)
+                {
+                    currentValue = endValue;
+                    timer.Stop();
+                }
+
+                updateCallback?.Invoke(currentValue);
+            };
+
+            timer.Start();
+        }
 
         /// <summary>页面初始化状态标记，防止重复初始化</summary>
         private bool _isInitialized = false;
@@ -58,11 +122,68 @@ namespace IODataPlatform.Views.Pages
         /// 获取应用程序版本信息和禅道系统URL配置
         /// 设置初始化完成标记以避免重复初始化
         /// </summary>
-        private void InitializeViewModel()
+        private async void InitializeViewModel()
         {
             AppVersion = Assembly.GetExecutingAssembly().GetName().Version?.ToString();
             ZentaoUrl = config.Value.ZentaoUrl;
+            
+            // 获取统计数据
+            await GetStatistics();
+            
+            // 数据加载完成后启动计数动画
+            StartCountAnimation();
+            
             _isInitialized = true;
+        }
+        
+        /// <summary>
+        /// 获取统计数据
+        /// </summary>
+        private async Task GetStatistics()
+        {
+            try
+            {
+                // 创建HttpClient实例
+                using (var httpClient = new HttpClient())
+                {
+                    // 发送GET请求到统计API
+                    var response = await httpClient.GetAsync("http://localhost:5000/api/statistics");
+                    
+                    // 确保请求成功
+                    response.EnsureSuccessStatusCode();
+                    
+                    // 读取响应内容
+                    var responseContent = await response.Content.ReadAsStringAsync();
+                    
+                    // 解析JSON响应
+                    var statistics = JsonSerializer.Deserialize<StatisticsResponse>(responseContent);
+                    
+                    // 更新统计数据
+                    ProjectCount = statistics.ProjectCount;
+                    IoCount = statistics.IoCount;
+                    CableCount = statistics.CableCount;
+                }
+            }
+            catch (Exception ex)
+            {
+                // 处理异常
+                await message.ErrorAsync($"获取统计数据失败：{ex.Message}");
+            }
+        }
+        
+        /// <summary>
+        /// 统计响应数据模型
+        /// </summary>
+        private class StatisticsResponse
+        {
+            /// <summary>项目数量</summary>
+            public int ProjectCount { get; set; }
+            
+            /// <summary>IO配置数量</summary>
+            public int IoCount { get; set; }
+            
+            /// <summary>电缆数量</summary>
+            public int CableCount { get; set; }
         }
         
         /// <summary>
