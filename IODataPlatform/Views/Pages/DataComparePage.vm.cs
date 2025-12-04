@@ -192,7 +192,16 @@ public partial class DataCompareViewModel : ObservableObject, INavigationAware
     }
 
     [ObservableProperty]
-    private string statusMessage = "就绪";
+    private string statusMessage = "就绪"; 
+
+    [ObservableProperty]
+    private bool isComparing = false; 
+
+    [ObservableProperty]
+    private int progressValue = 0; 
+
+    [ObservableProperty]
+    private string progressMessage = string.Empty;
 
     // 分页相关属性
     [ObservableProperty]
