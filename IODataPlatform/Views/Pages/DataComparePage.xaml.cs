@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿using System.Data;
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿using System.Data;
 using System.IO;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -1226,6 +1226,8 @@ public partial class DataComparePage : INavigableView<DataCompareViewModel> {
             return; 
         }
 
+        // 显示进度提示
+        ViewModel.IsComparing = true;
         model.Status.Busy("正在比对数据");
         ViewModel.StatusMessage = "正在加载数据...";
 
@@ -1278,6 +1280,10 @@ public partial class DataComparePage : INavigableView<DataCompareViewModel> {
         catch (Exception ex) {
             model.Status.Error($"对比失败：{ex.Message}");
             ViewModel.StatusMessage = $"错误：{ex.Message}";
+        }
+        finally {
+            // 隐藏进度提示
+            ViewModel.IsComparing = false;
         }
     }
 
