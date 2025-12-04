@@ -7,6 +7,7 @@
     xmlns:local="clr-namespace:IODataPlatform.Views.Pages"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     xmlns:converters="clr-namespace:IODataPlatform.Converters"
+    xmlns:controls="clr-namespace:IODataPlatform.Controls"
     AllowDrop="True"
     Drop="Page_Drop"
     ScrollViewer.CanContentScroll="False"
@@ -25,6 +26,9 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="50" />
         </Grid.RowDefinitions>
+
+        <!-- 进度提示控件 -->
+        <controls:ProgressOverlay x:Name="ProgressOverlay" Grid.RowSpan="3" Visibility="{Binding ViewModel.IsComparing, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
         <!-- 顶部控制栏：文件选择 + 所有按钮 -->
         <ui:Card Grid.Row="0" Margin="0,0,0,0" Padding="5">

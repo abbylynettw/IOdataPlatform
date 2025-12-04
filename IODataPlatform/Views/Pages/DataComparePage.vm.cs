@@ -176,6 +176,9 @@ public partial class DataCompareViewModel : ObservableObject, INavigationAware
     [ObservableProperty]
     private bool isSideBySideMode = true;
 
+    [ObservableProperty]
+    private bool isComparing = false; // 是否正在对比数据
+
     partial void OnIsSideBySideModeChanged(bool value)
     {
         // 切换视图模式
