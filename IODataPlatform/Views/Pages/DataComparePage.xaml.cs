@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿using System.Data;
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿using System.Data;
 using System.IO;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -1227,10 +1227,17 @@ public partial class DataComparePage : INavigableView<DataCompareViewModel> {
         }
 
         model.Status.Busy("正在比对数据");
-        ViewModel.StatusMessage = "正在加载数据...";
+        ViewModel.StatusMessage = "正在加载数据..."; 
+        ViewModel.ProgressValue = 0; 
+        ViewModel.IsProgressVisible = true;
 
         try {
+            ViewModel.StatusMessage = "正在加载文件1..."; 
+            ViewModel.ProgressValue = 5; 
             using var oldData1 = await excel.GetDataTableAsStringAsync(ViewModel.FilePath1, ViewModel.SelectedSheet1, true);
+            
+            ViewModel.StatusMessage = "正在加载文件2..."; 
+            ViewModel.ProgressValue = 15; 
             using var oldData2 = await excel.GetDataTableAsStringAsync(ViewModel.FilePath2, ViewModel.SelectedSheet2, true);
             
             // 如果使用主键对比,检查主键唯一性
@@ -1259,25 +1266,38 @@ public partial class DataComparePage : INavigableView<DataCompareViewModel> {
                 }
             }
             
-            ViewModel.StatusMessage = "正在对比数据...";
+            ViewModel.StatusMessage = "正在对比数据..."; 
+            ViewModel.ProgressValue = 25;
+            
+            // 创建进度报告器
+            var progress = new Progress<int>(value => { 
+                ViewModel.ProgressValue = 25 + (value * 70) / 100; // 25-95%用于数据对比 
+            });
             
             // 执行对比
-            var comparisonResults = await PerformComparison(oldData1, oldData2);
+            var comparisonResults = await PerformComparison(oldData1, oldData2, progress);
             
-            // 更新UI
+            ViewModel.StatusMessage = "正在更新界面..."; 
+            ViewModel.ProgressValue = 95; 
+            
+            // 更新UI - 使用AddRange优化性能
             ViewModel.ComparisonResults.Clear();
-            foreach (var result in comparisonResults) {
-                ViewModel.ComparisonResults.Add(result);
-            }
+            ViewModel.ComparisonResults.AddRange(comparisonResults);
             
             // 更新统计信息
             ViewModel.UpdateStatistics();
             
+            ViewModel.StatusMessage = $"对比完成，共找到 {comparisonResults.Count} 条记录"; 
+            ViewModel.ProgressValue = 100; 
             model.Status.Success($"对比完成，共找到 {comparisonResults.Count} 条记录");
         }
         catch (Exception ex) {
             model.Status.Error($"对比失败：{ex.Message}");
             ViewModel.StatusMessage = $"错误：{ex.Message}";
+            ViewModel.ProgressValue = 0;
+        } finally {
+            // 隐藏进度条
+            ViewModel.IsProgressVisible = false;
         }
     }
 
@@ -1342,9 +1362,12 @@ public partial class DataComparePage : INavigableView<DataCompareViewModel> {
         return duplicates;
     }
 
-    private async Task<List<ComparisonRow>> PerformComparison(DataTable oldData, DataTable newData) {
+    private async Task<List<ComparisonRow>> PerformComparison(DataTable oldData, DataTable newData, IProgress<int>? progress = null) {
         return await Task.Run(() => {
             var results = new List<ComparisonRow>();
+            
+            int totalSteps = ViewModel.SelectedKeyFields.Count == 0 ? 2 : 4; // 按顺序对比：2步；按主键对比：4步
+            int currentStep = 0;
             
             // 判断是否按顺序对比
             if (ViewModel.SelectedKeyFields.Count == 0)
@@ -1403,7 +1426,17 @@ public partial class DataComparePage : INavigableView<DataCompareViewModel> {
                             ChangedFields = changedFields
                         });
                     }
+                    
+                    // 报告进度（每100行更新一次）
+                    if ((i + 1) % 100 == 0 || i == maxRows - 1)
+                    {
+                        currentStep = (i + 1) * 90 / maxRows; // 前90%用于数据对比
+                        progress?.Report(currentStep);
+                    }
                 }
+                
+                currentStep = 90;
+                progress?.Report(currentStep);
             }
             else
             {
@@ -1412,7 +1445,9 @@ public partial class DataComparePage : INavigableView<DataCompareViewModel> {
                 var newKeyIndex = new Dictionary<string, DataRow>();
                 var processedKeys = new HashSet<string>();
                 
-                // 构建索引：将多个主键字段的值拼接为一个键
+                // 步骤1：构建旧数据索引
+                int rowIndex = 0;
+                int totalRows = oldData.Rows.Count;
                 foreach (DataRow row in oldData.Rows) {
                     var keyParts = new List<string>();
                     foreach (var fieldName in ViewModel.SelectedKeyFields)
@@ -1423,11 +1458,24 @@ public partial class DataComparePage : INavigableView<DataCompareViewModel> {
                         }
                     }
                     var key = string.Join("|", keyParts);
-                    if (!string.IsNullOrEmpty(key)) {
+                    if (!string.IsNullOrEmpty(key)) { 
                         oldKeyIndex[key] = row;
+                    }
+                    
+                    rowIndex++;
+                    if (rowIndex % 100 == 0 || rowIndex == totalRows)
+                    {
+                        currentStep = (rowIndex * 20) / totalRows; // 前20%用于构建旧数据索引
+                        progress?.Report(currentStep);
                     }
                 }
                 
+                currentStep = 20;
+                progress?.Report(currentStep);
+                
+                // 步骤2：构建新数据索引
+                rowIndex = 0;
+                totalRows = newData.Rows.Count;
                 foreach (DataRow row in newData.Rows) {
                     var keyParts = new List<string>();
                     foreach (var fieldName in ViewModel.SelectedKeyFields)
@@ -1438,12 +1486,24 @@ public partial class DataComparePage : INavigableView<DataCompareViewModel> {
                         }
                     }
                     var key = string.Join("|", keyParts);
-                    if (!string.IsNullOrEmpty(key)) {
+                    if (!string.IsNullOrEmpty(key)) { 
                         newKeyIndex[key] = row;
+                    }
+                    
+                    rowIndex++;
+                    if (rowIndex % 100 == 0 || rowIndex == totalRows)
+                    {
+                        currentStep = 20 + (rowIndex * 20) / totalRows; // 20-40%用于构建新数据索引
+                        progress?.Report(currentStep);
                     }
                 }
                 
-                // 先处理新数据中的记录（保持新数据的原始顺序）
+                currentStep = 40;
+                progress?.Report(currentStep);
+                
+                // 步骤3：处理新数据中的记录（保持新数据的原始顺序）
+                rowIndex = 0;
+                totalRows = newData.Rows.Count;
                 foreach (DataRow newRow in newData.Rows) {
                     var keyParts = new List<string>();
                     foreach (var fieldName in ViewModel.SelectedKeyFields)
@@ -1454,7 +1514,10 @@ public partial class DataComparePage : INavigableView<DataCompareViewModel> {
                         }
                     }
                     var key = string.Join("|", keyParts);
-                    if (string.IsNullOrEmpty(key)) continue;
+                    if (string.IsNullOrEmpty(key)) {
+                        rowIndex++;
+                        continue;
+                    }
                     
                     processedKeys.Add(key);
                     
@@ -1484,18 +1547,30 @@ public partial class DataComparePage : INavigableView<DataCompareViewModel> {
                         };
                         results.Add(comparisonRow);
                     }
-                    else {
+                    else { 
                         // 只在新数据中存在，表示新增
-                        var comparisonRow = new ComparisonRow {
+                        var comparisonRow = new ComparisonRow { 
                             Key = key,
                             CurrentRow = newRow,
                             Type = ComparisonType.Added
                         };
                         results.Add(comparisonRow);
                     }
+                    
+                    rowIndex++;
+                    if (rowIndex % 100 == 0 || rowIndex == totalRows)
+                    {
+                        currentStep = 40 + (rowIndex * 40) / totalRows; // 40-80%用于处理新数据
+                        progress?.Report(currentStep);
+                    }
                 }
                 
-                // 再处理只在旧数据中存在的记录（删除的记录）
+                currentStep = 80;
+                progress?.Report(currentStep);
+                
+                // 步骤4：处理只在旧数据中存在的记录（删除的记录）
+                rowIndex = 0;
+                totalRows = oldData.Rows.Count;
                 foreach (DataRow oldRow in oldData.Rows) {
                     var keyParts = new List<string>();
                     foreach (var fieldName in ViewModel.SelectedKeyFields)
@@ -1506,16 +1581,26 @@ public partial class DataComparePage : INavigableView<DataCompareViewModel> {
                         }
                     }
                     var key = string.Join("|", keyParts);
-                    if (string.IsNullOrEmpty(key)) continue;
+                    if (string.IsNullOrEmpty(key)) { 
+                        rowIndex++;
+                        continue;
+                    }
                     
-                    if (!processedKeys.Contains(key)) {
+                    if (!processedKeys.Contains(key)) { 
                         // 只在旧数据中存在，表示删除
-                        var comparisonRow = new ComparisonRow {
+                        var comparisonRow = new ComparisonRow { 
                             Key = key,
                             OldRow = oldRow,
                             Type = ComparisonType.Deleted
                         };
                         results.Add(comparisonRow);
+                    }
+                    
+                    rowIndex++;
+                    if (rowIndex % 100 == 0 || rowIndex == totalRows)
+                    {
+                        currentStep = 80 + (rowIndex * 10) / totalRows; // 80-90%用于处理旧数据
+                        progress?.Report(currentStep);
                     }
                 }
             }
@@ -1525,6 +1610,8 @@ public partial class DataComparePage : INavigableView<DataCompareViewModel> {
             {
                 results[i].RowIndex = i + 1;
             }
+            
+            progress?.Report(100);
             
             return results;
         });
