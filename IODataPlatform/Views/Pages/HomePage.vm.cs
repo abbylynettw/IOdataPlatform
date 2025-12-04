@@ -1,4 +1,4 @@
-﻿﻿using IODataPlatform.Models;
+using IODataPlatform.Models;
 using LYSoft.Libs.ServiceInterfaces;
 using System;
 using System.Collections.Generic;
@@ -36,6 +36,25 @@ namespace IODataPlatform.Views.Pages
 
         /// <summary>页面初始化状态标记，防止重复初始化</summary>
         private bool _isInitialized = false;
+
+        private bool _isLoading = true;
+        public bool IsLoading
+        {
+            get => _isLoading;
+            set => SetProperty(ref _isLoading, value);
+        }
+
+        /// <summary>系统中项目的总数</summary>
+        [ObservableProperty]
+        public int projectCount;
+
+        /// <summary>系统中IO配置的总数</summary>
+        [ObservableProperty]
+        public int ioConfigCount;
+
+        /// <summary>系统中电缆的总数</summary>
+        [ObservableProperty]
+        public int cableCount;
        
 
         /// <summary>
@@ -58,11 +77,40 @@ namespace IODataPlatform.Views.Pages
         /// 获取应用程序版本信息和禅道系统URL配置
         /// 设置初始化完成标记以避免重复初始化
         /// </summary>
-        private void InitializeViewModel()
+        private async void InitializeViewModel()
         {
             AppVersion = Assembly.GetExecutingAssembly().GetName().Version?.ToString();
             ZentaoUrl = config.Value.ZentaoUrl;
+            await LoadStatisticsData();
             _isInitialized = true;
+        }
+
+        /// <summary>
+        /// 加载统计数据
+        /// 从数据库获取项目、IO配置和电缆的数量
+        /// </summary>
+        private async Task LoadStatisticsData()
+        {
+            try
+            {
+                // 获取项目数量
+                ProjectCount = await context.Db.Queryable<config_project>().CountAsync();
+
+                // 获取IO配置数量（从publish_io表统计）
+                IoConfigCount = await context.Db.Queryable<publish_io>().CountAsync();
+
+                // 获取电缆数量（从publish_cable表统计）
+                CableCount = await context.Db.Queryable<publish_cable>().CountAsync();
+            }
+            catch (Exception ex)
+            {
+                model.Status.Error($"加载统计数据失败：{ex.Message}");
+            }
+            finally
+            {
+                // 数据加载完成
+                IsLoading = false;
+            }
         }
         
         /// <summary>
