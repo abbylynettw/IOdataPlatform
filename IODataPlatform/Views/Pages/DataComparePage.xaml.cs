@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿using System.Data;
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿using System.Data;
 using System.IO;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -1226,11 +1226,21 @@ public partial class DataComparePage : INavigableView<DataCompareViewModel> {
             return; 
         }
 
+        // 开始对比，初始化进度
+        ViewModel.IsComparing = true;
+        ViewModel.ProgressValue = 0;
+        ViewModel.ProgressMessage = "正在加载数据...";
         model.Status.Busy("正在比对数据");
         ViewModel.StatusMessage = "正在加载数据...";
 
         try {
+            // 加载第一个文件数据
+            ViewModel.ProgressMessage = "正在加载文件1数据...";
             using var oldData1 = await excel.GetDataTableAsStringAsync(ViewModel.FilePath1, ViewModel.SelectedSheet1, true);
+            
+            // 加载第二个文件数据
+            ViewModel.ProgressValue = 20;
+            ViewModel.ProgressMessage = "正在加载文件2数据...";
             using var oldData2 = await excel.GetDataTableAsStringAsync(ViewModel.FilePath2, ViewModel.SelectedSheet2, true);
             
             // 如果使用主键对比,检查主键唯一性
@@ -1259,7 +1269,9 @@ public partial class DataComparePage : INavigableView<DataCompareViewModel> {
                 }
             }
             
-            ViewModel.StatusMessage = "正在对比数据...";
+            // 开始数据对比
+            ViewModel.ProgressValue = 40;
+            ViewModel.ProgressMessage = "正在对比数据...";
             
             // 执行对比
             var comparisonResults = await PerformComparison(oldData1, oldData2);
@@ -1270,14 +1282,28 @@ public partial class DataComparePage : INavigableView<DataCompareViewModel> {
                 ViewModel.ComparisonResults.Add(result);
             }
             
+            // 对比完成，更新进度到100%
+            ViewModel.ProgressValue = 100;
+            ViewModel.ProgressMessage = "对比完成！";
+            
             // 更新统计信息
             ViewModel.UpdateStatistics();
             
             model.Status.Success($"对比完成，共找到 {comparisonResults.Count} 条记录");
+            
+            // 重置进度属性
+            ViewModel.IsComparing = false;
+            ViewModel.ProgressValue = 0;
+            ViewModel.ProgressMessage = string.Empty;
         }
         catch (Exception ex) {
             model.Status.Error($"对比失败：{ex.Message}");
             ViewModel.StatusMessage = $"错误：{ex.Message}";
+            
+            // 重置进度属性
+            ViewModel.IsComparing = false;
+            ViewModel.ProgressValue = 0;
+            ViewModel.ProgressMessage = string.Empty;
         }
     }
 
@@ -1354,6 +1380,14 @@ public partial class DataComparePage : INavigableView<DataCompareViewModel> {
                 
                 for (int i = 0; i < maxRows; i++)
                 {
+                    // 更新进度
+                    int progress = 40 + (int)((i + 1) / (double)maxRows * 50);
+                    if (progress != ViewModel.ProgressValue)
+                    {
+                        ViewModel.ProgressValue = progress;
+                        ViewModel.ProgressMessage = $"正在对比第 {i + 1}/{maxRows} 行...";
+                    }
+                    
                     DataRow oldRow = i < oldData.Rows.Count ? oldData.Rows[i] : null;
                     DataRow newRow = i < newData.Rows.Count ? newData.Rows[i] : null;
                     
@@ -1444,7 +1478,18 @@ public partial class DataComparePage : INavigableView<DataCompareViewModel> {
                 }
                 
                 // 先处理新数据中的记录（保持新数据的原始顺序）
+                int totalRows = newData.Rows.Count + oldData.Rows.Count;
+                int processedRows = 0;
+                
                 foreach (DataRow newRow in newData.Rows) {
+                    processedRows++;
+                    // 更新进度
+                    int progress = 40 + (int)(processedRows / (double)totalRows * 50);
+                    if (progress != ViewModel.ProgressValue)
+                    {
+                        ViewModel.ProgressValue = progress;
+                        ViewModel.ProgressMessage = $"正在对比第 {processedRows}/{totalRows} 条记录...";
+                    }
                     var keyParts = new List<string>();
                     foreach (var fieldName in ViewModel.SelectedKeyFields)
                     {
@@ -1495,8 +1540,16 @@ public partial class DataComparePage : INavigableView<DataCompareViewModel> {
                     }
                 }
                 
-                // 再处理只在旧数据中存在的记录（删除的记录）
+                // 处理旧数据中剩余的记录（删除的情况）
                 foreach (DataRow oldRow in oldData.Rows) {
+                    processedRows++;
+                    // 更新进度
+                    int progress = 40 + (int)(processedRows / (double)totalRows * 50);
+                    if (progress != ViewModel.ProgressValue)
+                    {
+                        ViewModel.ProgressValue = progress;
+                        ViewModel.ProgressMessage = $"正在对比第 {processedRows}/{totalRows} 条记录...";
+                    }
                     var keyParts = new List<string>();
                     foreach (var fieldName in ViewModel.SelectedKeyFields)
                     {

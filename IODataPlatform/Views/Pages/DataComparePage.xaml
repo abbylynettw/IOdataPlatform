@@ -263,6 +263,17 @@
                     <TextBlock Text="删除：" VerticalAlignment="Center" Margin="0,0,3,0" />
                     <TextBlock Text="{Binding ViewModel.DeletedCount}" VerticalAlignment="Center" FontWeight="Bold" Foreground="#FFF44336" Margin="0,0,5,0" />
                 </WrapPanel>
+                
+                <!-- 进度条 -->
+                <Grid Grid.Row="2" Visibility="{Binding ViewModel.IsComparing, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    
+                    <ProgressBar Grid.Row="0" Value="{Binding ViewModel.ProgressValue}" Height="10" Margin="0,5,0,0" />
+                    <TextBlock Grid.Row="1" Text="{Binding ViewModel.ProgressMessage}" HorizontalAlignment="Center" FontSize="12" Margin="0,2,0,0" />
+                </Grid>
             </Grid>
         </ui:Card>
 

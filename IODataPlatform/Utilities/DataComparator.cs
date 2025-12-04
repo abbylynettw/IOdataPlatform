@@ -1,4 +1,4 @@
-﻿﻿using System.ComponentModel.DataAnnotations;
+﻿﻿﻿using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Reflection;
 
@@ -61,64 +61,72 @@ public class DataComparator {
             var newItemDict = newList.ToDictionary(keySelector);
 
             // 阶段1：处理新增数据（在新数据中存在，但在旧数据中不存在）
-            foreach (var item in newList) {
+            var addedItems = newList.AsParallel().Where(item => {
                 var key = keySelector(item);
-                if (!oldItemDict.ContainsKey(key)) {
-                    var diffObject = new DifferentObject<TKey>() { Key = key, Type = DifferentType.新增 };
-                    // 只记录非空属性的新值
-                    var diffProps = props
-                        .Select(prop => new DifferentProperty() {
-                            OldValue = null,
-                            NewValue = prop.Prop.GetValue(item),
-                            PropName = prop.Name
-                        })
-                        .Where(x => !string.IsNullOrEmpty($"{x.NewValue}"))
-                        .ToList();
-                    diffObject.DiffProps.AddRange(diffProps);
-                    diffList.Add(diffObject);
-                }
-            }
+                return !oldItemDict.ContainsKey(key);
+            }).Select(item => {
+                var key = keySelector(item);
+                var diffObject = new DifferentObject<TKey>() { Key = key, Type = DifferentType.新增 };
+                // 只记录非空属性的新值
+                var diffProps = props
+                    .Select(prop => new DifferentProperty() {
+                        OldValue = null,
+                        NewValue = prop.Prop.GetValue(item),
+                        PropName = prop.Name
+                    })
+                    .Where(x => !string.IsNullOrEmpty($"{x.NewValue}"))
+                    .ToList();
+                diffObject.DiffProps.AddRange(diffProps);
+                return diffObject;
+            }).ToList();
+            diffList.AddRange(addedItems);
 
             // 阶段2：处理删除数据（在旧数据中存在，但在新数据中不存在）
-            foreach (var item in oldList) {
+            var deletedItems = oldList.AsParallel().Where(item => {
                 var key = keySelector(item);
-                if (!newItemDict.ContainsKey(key)) {
-                    var diffObject = new DifferentObject<TKey>() { Key = key, Type = DifferentType.移除 };
-                    // 只记录非空属性的旧值
-                    var diffProps = props
-                        .Select(prop => new DifferentProperty() {
-                            NewValue = null,
-                            OldValue = prop.Prop.GetValue(item),
-                            PropName = prop.Name
-                        })
-                        .Where(x => !string.IsNullOrEmpty($"{x.OldValue}"))
-                        .ToList();
-                    diffObject.DiffProps.AddRange(diffProps);
-                    diffList.Add(diffObject);
-                }
-            }
+                return !newItemDict.ContainsKey(key);
+            }).Select(item => {
+                var key = keySelector(item);
+                var diffObject = new DifferentObject<TKey>() { Key = key, Type = DifferentType.移除 };
+                // 只记录非空属性的旧值
+                var diffProps = props
+                    .Select(prop => new DifferentProperty() {
+                        NewValue = null,
+                        OldValue = prop.Prop.GetValue(item),
+                        PropName = prop.Name
+                    })
+                    .Where(x => !string.IsNullOrEmpty($"{x.OldValue}"))
+                    .ToList();
+                diffObject.DiffProps.AddRange(diffProps);
+                return diffObject;
+            }).ToList();
+            diffList.AddRange(deletedItems);
 
             // 阶段3：处理修改数据（在两个数据集合中都存在，但属性值可能不同）
-            foreach (var oldItem in oldList) {
+            var modifiedItems = oldList.AsParallel().Where(oldItem => {
                 var key = keySelector(oldItem);
-                if (newItemDict.TryGetValue(key, out var newItem)) {
-                    var diffObject = new DifferentObject<TKey>() { Key = key, Type = DifferentType.覆盖 };
-                    // 只记录值发生变化的属性
-                    var diffProps = props
-                        .Select(prop => new DifferentProperty() {
-                            NewValue = prop.Prop.GetValue(newItem),
-                            OldValue = prop.Prop.GetValue(oldItem),
-                            PropName = prop.Name
-                        })
-                        .Where(x => !Equals(x.OldValue, x.NewValue))
-                        .ToList();
-                    
-                    if (diffProps.Count > 0) {
-                        diffObject.DiffProps.AddRange(diffProps);
-                        diffList.Add(diffObject);
-                    }
+                return newItemDict.ContainsKey(key);
+            }).Select(oldItem => {
+                var key = keySelector(oldItem);
+                newItemDict.TryGetValue(key, out var newItem);
+                var diffObject = new DifferentObject<TKey>() { Key = key, Type = DifferentType.覆盖 };
+                // 只记录值发生变化的属性
+                var diffProps = props
+                    .Select(prop => new DifferentProperty() {
+                        NewValue = prop.Prop.GetValue(newItem),
+                        OldValue = prop.Prop.GetValue(oldItem),
+                        PropName = prop.Name
+                    })
+                    .Where(x => !Equals(x.OldValue, x.NewValue))
+                    .ToList();
+                
+                if (diffProps.Count > 0) {
+                    diffObject.DiffProps.AddRange(diffProps);
+                    return diffObject;
                 }
-            }
+                return null;
+            }).Where(diffObject => diffObject != null).ToList();
+            diffList.AddRange(modifiedItems);
 
             return diffList;
         });
