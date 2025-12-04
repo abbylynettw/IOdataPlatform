@@ -1,0 +1,301 @@
+<Page x:Class="IODataPlatform.Views.SubPages.DepXT2.PointAddPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:local="clr-namespace:IODataPlatform.Views.SubPages.DepXT2"
+      mc:Ignorable="d" 
+      ui:NavigationView.HeaderContent="添加点"
+      d:DesignHeight="700" d:DesignWidth="900"
+      Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+      d:DataContext="{d:DesignInstance local:PointAddPage, IsDesignTimeCreatable=False}">
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <!-- 步骤指示器 -->
+            <RowDefinition Height="*"/>
+            <!-- 内容区 -->
+            <RowDefinition Height="Auto"/>
+            <!-- 底部操作按钮 -->
+        </Grid.RowDefinitions>
+
+        <!-- 步骤指示器 (只有3步) -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,30">
+            <!-- 步骤 1: 选择Excel -->
+            <Border BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}" 
+                    BorderThickness="2" 
+                    CornerRadius="50" 
+                    Width="40" Height="40"
+                    Background="{Binding ViewModel.Step1Background}">
+                <TextBlock Text="{Binding ViewModel.Step1Number}" FontSize="18" FontWeight="Bold" 
+                           HorizontalAlignment="Center" VerticalAlignment="Center"
+                           Foreground="{Binding ViewModel.Step1Foreground}"/>
+            </Border>
+            <TextBlock Text="选择Excel" VerticalAlignment="Center" Margin="8,0,20,0"
+                       FontWeight="{Binding ViewModel.Step1FontWeight}"/>
+
+            <ui:SymbolIcon Symbol="ChevronRight24" VerticalAlignment="Center" Margin="0,0,20,0"/>
+
+            <!-- 步骤 2: 校验数据 -->
+            <Border BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}" 
+                    BorderThickness="2" 
+                    CornerRadius="50" 
+                    Width="40" Height="40"
+                    Background="{Binding ViewModel.Step2Background}">
+                <TextBlock Text="{Binding ViewModel.Step2Number}" FontSize="18" FontWeight="Bold" 
+                           HorizontalAlignment="Center" VerticalAlignment="Center"
+                           Foreground="{Binding ViewModel.Step2Foreground}"/>
+            </Border>
+            <TextBlock Text="校验数据" VerticalAlignment="Center" Margin="8,0,20,0"
+                       FontWeight="{Binding ViewModel.Step2FontWeight}"/>
+
+            <ui:SymbolIcon Symbol="ChevronRight24" VerticalAlignment="Center" Margin="0,0,20,0"/>
+
+            <!-- 步骤 3: 生成预览 -->
+            <Border BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}" 
+                    BorderThickness="2" 
+                    CornerRadius="50" 
+                    Width="40" Height="40"
+                    Background="{Binding ViewModel.Step3Background}">
+                <TextBlock Text="{Binding ViewModel.Step3Number}" FontSize="18" FontWeight="Bold" 
+                           HorizontalAlignment="Center" VerticalAlignment="Center"
+                           Foreground="{Binding ViewModel.Step3Foreground}"/>
+            </Border>
+            <TextBlock Text="生成预览" VerticalAlignment="Center" Margin="8,0,0,0"
+                       FontWeight="{Binding ViewModel.Step3FontWeight}"/>
+        </StackPanel>
+
+        <!-- 内容区 -->
+        <ui:CardControl Grid.Row="1">
+            <Grid>
+                <!-- 步骤 1: 选择Excel文件和Sheet -->
+                <Grid Visibility="{Binding ViewModel.Step1Visibility}" Margin="20">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0" Text="选择数据源" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,10"/>
+                    
+                    <!-- 目标机柜提示 -->
+                    <Border Grid.Row="0" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+                            BorderBrush="{DynamicResource AccentFillColorDefaultBrush}"
+                            BorderThickness="1"
+                            CornerRadius="4"
+                            Padding="12,8"
+                            Margin="0,0,0,20">
+                        <StackPanel Orientation="Horizontal">
+                            <ui:SymbolIcon Symbol="Info24" FontSize="16" Margin="0,0,8,0" Foreground="{DynamicResource AccentFillColorDefaultBrush}"/>
+                            <TextBlock Text="{Binding ViewModel.Step1StatusText}" 
+                                       Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                                       TextWrapping="Wrap"
+                                       VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+                    
+                    <!-- 文件选择区 -->
+                    <ui:CardControl Grid.Row="1" Margin="0,0,0,15">
+                        <StackPanel Margin="15">
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,15">
+                                <ui:SymbolIcon Symbol="Document24" FontSize="20" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                                <TextBlock Text="文件路径" FontWeight="SemiBold" VerticalAlignment="Center" Width="80"/>
+                                <TextBox Text="{Binding ViewModel.SelectedFilePath}" 
+                                         IsReadOnly="True" 
+                                         Width="500" 
+                                         Margin="0,0,10,0"
+                                         VerticalAlignment="Center"/>
+                                <ui:Button Icon="{ui:SymbolIcon FolderOpen24}" 
+                                           Content="浏览" 
+                                           Appearance="Primary"
+                                           Command="{Binding ViewModel.BrowseFileCommand}"/>
+                            </StackPanel>
+
+                            <!-- 工作表选择 -->
+                            <Border BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
+                                    BorderThickness="1 0 0 0"
+                                    Padding="0,15,0,0"
+                                    Visibility="{Binding ViewModel.SheetSelectionVisibility}">
+                                <StackPanel>
+                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,15">
+                                        <ui:SymbolIcon Symbol="TableSimple24" FontSize="20" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                                        <TextBlock Text="选择工作表" FontWeight="SemiBold" VerticalAlignment="Center" Width="80"/>
+                                        <ComboBox ItemsSource="{Binding ViewModel.SheetNames}" 
+                                                  SelectedItem="{Binding ViewModel.SelectedSheet}"
+                                                  Width="300"
+                                                  Margin="0,0,10,0"/>
+                                        <TextBlock Text="{Binding ViewModel.SheetCountText}" 
+                                                   VerticalAlignment="Center"
+                                                   Foreground="Gray"/>
+                                    </StackPanel>
+                                    
+                                    <ui:Button Content="加载预览" 
+                                               Icon="{ui:SymbolIcon Eye24}"
+                                               Command="{Binding ViewModel.LoadPreviewCommand}"
+                                               Appearance="Secondary"
+                                               HorizontalAlignment="Right"/>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </ui:CardControl>
+
+                    <!-- 数据预览区 -->
+                    <ui:CardControl Grid.Row="2" Margin="0,0,0,15" Visibility="{Binding ViewModel.PreviewVisibility}">
+                        <Grid Margin="15">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+
+                            <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+                                <ui:SymbolIcon Symbol="DataBarVertical24" FontSize="20" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                                <TextBlock Text="数据预览" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,20,0"/>
+                                <TextBlock Text="{Binding ViewModel.PreviewDataCountText}" 
+                                           VerticalAlignment="Center" 
+                                           Foreground="#1976D2"
+                                           FontWeight="Bold"/>
+                            </StackPanel>
+
+                            <DataGrid Grid.Row="1" 
+                                      ItemsSource="{Binding ViewModel.ExcelPreviewData}"
+                                      AutoGenerateColumns="True"
+                                      IsReadOnly="True"
+                                      MaxHeight="300"
+                                      CanUserSortColumns="True"
+                                      HeadersVisibility="Column"
+                                      GridLinesVisibility="Horizontal"
+                                      AlternatingRowBackground="{DynamicResource ControlFillColorInputActiveBrush}"/>
+                        </Grid>
+                    </ui:CardControl>
+
+                    <!-- 状态信息 -->
+                    <StackPanel Grid.Row="3" Orientation="Horizontal">
+                        <ui:SymbolIcon Symbol="Info24" FontSize="16" Margin="0,0,8,0" Foreground="Gray"/>
+                        <TextBlock Text="{Binding ViewModel.Step2StatusText}" 
+                                   Foreground="Gray"
+                                   TextWrapping="Wrap"
+                                   VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Grid>
+
+                <!-- 步骤 2: 数据校验 -->
+                <Grid Visibility="{Binding ViewModel.Step2Visibility}" Margin="20">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0" Text="数据校验结果" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,20"/>
+                    
+                    <!-- 校验结果卡片 -->
+                    <ui:CardControl Grid.Row="1" Margin="0,0,0,20">
+                        <StackPanel Margin="20">
+                            <!-- 校验结果信息 -->
+                            <Border Background="{DynamicResource LayerFillColorDefaultBrush}"
+                                    BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="4"
+                                    Padding="15"
+                                    Margin="0,0,0,20">
+                                <StackPanel>
+                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                        <ui:SymbolIcon Symbol="CheckmarkCircle24" FontSize="20" Margin="0,0,10,0" 
+                                                       Foreground="#4CAF50" VerticalAlignment="Center"/>
+                                        <TextBlock Text="校验结果" FontWeight="SemiBold" FontSize="14" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                    <TextBlock Text="{Binding ViewModel.ValidationResult}" 
+                                               TextWrapping="Wrap"
+                                               FontFamily="Cascadia Code, Consolas"
+                                               FontSize="12"
+                                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- 报警类型选择 -->
+                            <Border Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+                                    BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="4"
+                                    Padding="15">
+                                <StackPanel>
+                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,15">
+                                        <ui:SymbolIcon Symbol="Options24" FontSize="20" Margin="0,0,10,0" 
+                                                       Foreground="{DynamicResource AccentFillColorDefaultBrush}" VerticalAlignment="Center"/>
+                                        <TextBlock Text="选择报警类型" FontWeight="SemiBold" FontSize="14" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                    
+                                    <StackPanel>
+                                        <RadioButton Content="📡 通讯报警（分配到预留板卡）" 
+                                                     IsChecked="{Binding ViewModel.IsCommunicationAlarm}"
+                                                     Margin="0,0,0,10"
+                                                     FontSize="13"/>
+                                        <TextBlock Text="• 使用预留板卡进行通讯报警信号分配" 
+                                                   FontSize="11" 
+                                                   Foreground="Gray" 
+                                                   Margin="28,0,0,15"/>
+                                        
+                                        <RadioButton Content="🔌 硬点报警（可选分配到现有板卡）" 
+                                                     IsChecked="{Binding ViewModel.IsHardwareAlarm}"
+                                                     FontSize="13"/>
+                                        <TextBlock Text="• 可选择分配到现有板卡或放入未分配列表" 
+                                                   FontSize="11" 
+                                                   Foreground="Gray" 
+                                                   Margin="28,0,0,0"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </ui:CardControl>
+                </Grid>
+
+                <!-- 步骤 3: 生成预览 -->
+                <StackPanel Visibility="{Binding ViewModel.Step3Visibility}" Margin="20">
+                    <TextBlock Text="报警点生成预览" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,20"/>
+                    
+                    <DataGrid ItemsSource="{Binding ViewModel.PreviewData}"
+                              AutoGenerateColumns="False"
+                              IsReadOnly="True"
+                              Height="400"
+                              CanUserSortColumns="True">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="机柜名称" Binding="{Binding 机柜名称}" Width="100"/>
+                            <DataGridTextColumn Header="信号位号" Binding="{Binding SignalNumber}" Width="150"/>
+                            <DataGridTextColumn Header="描述" Binding="{Binding 信号描述}" Width="200"/>
+                            <DataGridTextColumn Header="分配状态" Binding="{Binding 分配状态}" Width="100"/>
+                            <DataGridTextColumn Header="分配位置" Binding="{Binding 分配位置}" Width="*"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    
+                    <TextBlock Text="{Binding ViewModel.PreviewSummary}" 
+                               Margin="0,15,0,0"
+                               Foreground="Gray"/>
+                </StackPanel>
+            </Grid>
+        </ui:CardControl>
+
+        <!-- 底部操作按钮 -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
+            <ui:Button Content="上一步" 
+                       Command="{Binding ViewModel.PreviousStepCommand}"
+                       Appearance="Secondary"
+                       Visibility="{Binding ViewModel.PreviousButtonVisibility}"
+                       Margin="0,0,10,0"/>
+            <ui:Button Content="下一步" 
+                       Command="{Binding ViewModel.NextStepCommand}"
+                       Appearance="Primary"
+                       Visibility="{Binding ViewModel.NextButtonVisibility}"
+                       Margin="0,0,10,0"/>
+            <ui:Button Content="完成" 
+                       Command="{Binding ViewModel.FinishCommand}"
+                       Appearance="Success"
+                       Visibility="{Binding ViewModel.FinishButtonVisibility}"
+                       Margin="0,0,10,0"/>
+            <ui:Button Content="取消" 
+                       Command="{Binding ViewModel.CancelCommand}"/>
+        </StackPanel>
+    </Grid>
+</Page>

@@ -1,0 +1,73 @@
+﻿<Page x:Class="IODataPlatform.Views.SubPages.Project.SubProjectPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="clr-namespace:IODataPlatform.Views.SubPages.Project"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:ly="http://lysoft/wpf"
+      ui:NavigationView.HeaderContent="维护子项表"
+      d:DataContext="{d:DesignInstance local:Project, IsDesignTimeCreatable=False}"
+      Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+      ScrollViewer.CanContentScroll="False"
+      mc:Ignorable="d">
+
+    <Page.Resources>
+        <ly:NullToBooleanConverter IsInverse="True" x:Key="NullToBooleanConverter" />
+    </Page.Resources>
+
+    <Grid>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Orientation="Horizontal"
+                    Margin="0,0,0,10">
+            <ui:TextBlock Text="当前专业："
+                          VerticalAlignment="Center" />
+            <ui:TextBlock Text="{Binding ViewModel.Major.CableSystem}"
+                          VerticalAlignment="Center" />
+            <ui:Button Margin="10,0,0,0"
+                       Icon="{ui:SymbolIcon Add24}"
+                       Appearance="Primary"
+                       Command="{Binding ViewModel.AddCommand}" />
+        </StackPanel>
+
+        <ui:DataGrid Grid.Row="1"
+                     Style="{StaticResource DataGridStyle}"
+                     ItemsSource="{Binding ViewModel.SubProjects}">
+            <ui:DataGrid.Columns>
+                <DataGridTemplateColumn Width="107"
+                                        Header="操作">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <ui:Button CommandParameter="{Binding}"
+                                           Icon="{ui:SymbolIcon Edit24}"
+                                           Appearance="Primary"
+                                           Command="{Binding RelativeSource={RelativeSource AncestorType=local:SubProjectPage}, Path=ViewModel.EditCommand}" />
+                                <ui:Button Margin="2,0,0,0"
+                                           Icon="{ui:SymbolIcon Delete24}"
+                                           Appearance="Danger"
+                                           CommandParameter="{Binding}"
+                                           Command="{Binding RelativeSource={RelativeSource AncestorType=local:SubProjectPage}, Path=ViewModel.DeleteCommand}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Width="100"
+                                    Header="子项名称"
+                                    Binding="{Binding Name}"
+                                    ElementStyle="{StaticResource DataGridTextBlockCellStyle_Center}" />
+                <DataGridTextColumn Width="300"
+                                    Header="创建人"
+                                    Binding="{Binding CreatorName}"
+                                    ElementStyle="{StaticResource DataGridTextBlockCellStyle_Center}" />
+            </ui:DataGrid.Columns>
+        </ui:DataGrid>
+
+    </Grid>
+
+</Page>

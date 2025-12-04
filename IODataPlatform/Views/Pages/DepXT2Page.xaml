@@ -1,0 +1,526 @@
+<Page x:Class="IODataPlatform.Views.Pages.DepXT2Page"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:ly="http://lysoft/wpf"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:xlmodel="clr-namespace:IODataPlatform.Models.ExcelModels"
+      xmlns:local="clr-namespace:IODataPlatform.Views.Pages"
+      xmlns:cus="clr-namespace:LYSoft.Libs.Wpf.WpfUI.Custom;assembly=LYSoft.Libs.Wpf.WpfUI"
+      d:DataContext="{d:DesignInstance local:DepXT2Page, IsDesignTimeCreatable=False}"
+      Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+      ScrollViewer.CanContentScroll="False"
+      mc:Ignorable="d">
+
+    <Page.Resources>
+        <ly:BooleanToVisiblityConverter x:Key="BooleanToVisiblityConverter" />
+        <ly:BooleanToVisiblityConverter IsInverse="True" x:Key="BooleanToVisiblityInverseConverter" />
+        <ly:NullToBooleanConverter IsInverse="True" x:Key="NullToBooleanConverter" />
+        <local:BoolToBrushConverter x:Key="BoolToBrushConverter"/>
+        <local:RateToBrushConverter x:Key="RateToBrushConverter"/>
+
+
+        <Style TargetType="ui:MenuItem"
+               BasedOn="{StaticResource UiMenuItem}"
+               x:Key="EditConfigurationTableMenuItem">
+            <Setter Property="Command"
+                    Value="{Binding ViewModel.EditConfigurationTableCommand}" />
+            <Setter Property="CommandParameter"
+                    Value="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Header}" />
+        </Style>
+        <Style TargetType="ui:MenuItem"
+               BasedOn="{StaticResource UiMenuItem}"
+               x:Key="ExportMenuItem">
+            <Setter Property="Command"
+                    Value="{Binding ViewModel.ExportCommand}" />
+            <Setter Property="CommandParameter"
+                    Value="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Header}" />
+        </Style>
+    </Page.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Orientation="Horizontal">
+            <Menu>
+                <ui:MenuItem Header="项目"
+                             Icon="{ui:SymbolIcon MultiSelectRtl24}">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="项目"
+                                   VerticalAlignment="Center"
+                                   Width="50" />
+                        <ComboBox ItemsSource="{Binding ViewModel.Projects}"
+                                  SelectedItem="{Binding ViewModel.Project}"
+                                  Width="160">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Name}" />
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="专业"
+                                   VerticalAlignment="Center"
+                                   Width="50" />
+                        <ComboBox ItemsSource="{Binding ViewModel.Majors}"
+                                  SelectedItem="{Binding ViewModel.Major}"
+                                  Width="160">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding CableSystem}" />
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="子项"
+                                   VerticalAlignment="Center"
+                                   Width="50" />
+                        <ComboBox ItemsSource="{Binding ViewModel.SubProjects}"
+                                  SelectedItem="{Binding ViewModel.SubProject}"
+                                  Width="160">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Name}" />
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                    </StackPanel>
+                    <Separator />
+                    <ui:MenuItem Header="全部刷新"
+                                 Icon="{ui:SymbolIcon ArrowSync12}"
+                                 Command="{Binding ViewModel.RefreshAllCommand}" />
+                </ui:MenuItem>
+                <Separator />
+                <ui:MenuItem Header="配置表"
+                             Icon="{ui:SymbolIcon TableSettings28}">
+                    <ui:MenuItem Header="IO卡型号配置表"
+                                 Style="{StaticResource EditConfigurationTableMenuItem}" />
+                    <ui:MenuItem Header="机柜报警清单配置表"
+                                 Style="{StaticResource EditConfigurationTableMenuItem}" />
+                </ui:MenuItem>
+                <ui:MenuItem Header="提取PDF"
+                             Icon="{ui:SymbolIcon Document24}"
+                             Command="{Binding ViewModel.ExtractPdfDataCommand}" />
+                <ui:MenuItem Header="原始数据导入"
+                             IsEnabled="{Binding ViewModel.CanEdit}"
+                             Icon="{ui:SymbolIcon ArrowDownload24}">
+                    <ui:MenuItem Header="导入输入输出表"
+                                 Icon="{ui:SymbolIcon TableMoveRight28}"
+                                 Command="{Binding ViewModel.ImportExcelDataCommand}"
+                                 ToolTip="导入PDF提取的IO数据" />
+                    <ui:MenuItem Header="导入阀门顺序"
+                                 Icon="{ui:SymbolIcon DocumentArrowUp20}"
+                                 Command="{Binding ViewModel.ValveSortingCommand}">
+                        <ui:MenuItem.ToolTip>
+                            <ToolTip>
+                                <StackPanel>
+                                    <TextBlock Text="从 Excel 导入阀门编号和气口顺序" FontWeight="Bold" Margin="0,0,0,5"/>
+                                    <TextBlock Text="填充到 DP阀位顺序字段，不进行排序"/>
+                                </StackPanel>
+                            </ToolTip>
+                        </ui:MenuItem.ToolTip>
+                    </ui:MenuItem>
+                </ui:MenuItem>
+            </Menu>
+            <Menu>
+                <ui:ToggleSwitch OnContent="固定算法"
+                                 OffContent="公式编辑器"
+                                 IsChecked="{Binding ViewModel.UseFormula}" />
+                <ui:MenuItem Header="重新计算"
+                             IsEnabled="{Binding ViewModel.CanEdit}"
+                             Icon="{ui:SymbolIcon Calculator24}"
+                             Command="{Binding ViewModel.RecalcCommand}" />
+                <ui:MenuItem Header="IO分配"
+                             IsEnabled="{Binding ViewModel.CanEdit}"
+                             Icon="{ui:SymbolIcon DeveloperBoard16}">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="冗余率"
+                                   VerticalAlignment="Center" />
+                        <Slider Margin="10,0,0,0"
+                                x:Name="SliderRedundancy"
+                                Minimum="0"
+                                Maximum="100"
+                                Value="{Binding ViewModel.RedundancyRate}"
+                                IsSnapToTickEnabled="True"
+                                Width="150" />
+                        <TextBlock Width="25"
+                                   TextAlignment="Center"
+                                   Text="{Binding ElementName=SliderRedundancy, Path=Value, Mode=OneWay}"
+                                   VerticalAlignment="Center" />
+                        <TextBlock Text="%"
+                                   VerticalAlignment="Center" />
+                    </StackPanel>
+                    <ui:MenuItem Header="IO自动分配"
+                                 Command="{Binding ViewModel.AllocateIOCommand}" />
+                    <Separator />
+                    <ui:MenuItem Header="FF从站模块分配"
+                                 Icon="{ui:SymbolIcon Connector24}"
+                                 Command="{Binding ViewModel.AllocateFFSlaveModulesCommand}" />
+                    <ui:MenuItem Header="预览IO分配结果"
+                                 Icon="{ui:SymbolIcon Eye24}"
+                                 Command="{Binding ViewModel.PreviewAllocateIOCommand}" />
+                </ui:MenuItem>
+                <ui:MenuItem Header="点详情管理"
+                             IsEnabled="{Binding ViewModel.CanEdit}"
+                             Icon="{ui:SymbolIcon DataUsage24}"
+                             Command="{Binding ViewModel.OpenPointDetailManagementCommand}" />
+                <ui:MenuItem Header="发布"
+                             IsEnabled="{Binding ViewModel.CanEdit}"
+                             Icon="{ui:SymbolIcon Send24}">
+                    <ui:MenuItem Header="发布"
+                                 Icon="{ui:SymbolIcon Send24}"
+                                 Command="{Binding ViewModel.PublishCommand}" />
+                </ui:MenuItem>
+                <ui:ToggleSwitch Name="ShowPoints"
+                                 OnContent="点表"
+                                 OffContent="结构表"
+                                 IsChecked="True" />
+                <ui:MenuItem Command="{Binding ViewModel.GetTotalSummaryInfoCommand}" Header="统计"/>
+                <Separator />
+                <ui:MenuItem IsEnabled="False"
+                             Foreground="{DynamicResource TextFillColorPrimaryBrush}">
+                    <ui:MenuItem.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <ui:TextBlock Text="总机柜数："
+                                          FontSize="14" />
+                            <ui:TextBlock Margin="5,0,0,0"
+                                          Text="{Binding ViewModel.AllDataCount}"
+                                          FontSize="14" />
+                        </StackPanel>
+                    </ui:MenuItem.Header>
+                </ui:MenuItem>
+            </Menu>
+        </StackPanel>
+
+        <Menu Grid.Row="1"
+              IsEnabled="{Binding ViewModel.AllData, Converter={StaticResource NullToBooleanConverter}}"
+              Visibility="{Binding ElementName=ShowPoints ,Path=IsChecked, Converter={StaticResource BooleanToVisiblityConverter}}">
+            <ui:MenuItem Header="刷新"
+                         IsEnabled="{Binding ViewModel.CanEdit}"
+                         Icon="{ui:SymbolIcon ArrowSync12}"
+                         Command="{Binding ViewModel.RefreshCommand}" />
+            <ui:MenuItem Header="添加"
+                         IsEnabled="{Binding ViewModel.CanEdit}"
+                         Icon="{ui:SymbolIcon AddCircle24}"
+                         Command="{Binding ViewModel.AddCommand}" />
+            <ui:MenuItem Header="全部删除"
+                         IsEnabled="{Binding ViewModel.CanEdit}"
+                         Icon="{ui:SymbolIcon Delete24}"
+                         Command="{Binding ViewModel.ClearCommand}" />
+            <ui:MenuItem Header="显示列"
+                         Icon="{ui:SymbolIcon Settings24}"
+                         Click="ShowColumnsDialog_Click"/>
+            <ui:MenuItem Header="数据排序"
+                         IsEnabled="{Binding ViewModel.CanEdit}"
+                         Icon="{ui:SymbolIcon ArrowSort24}">
+                <ui:MenuItem Header="通用排序（箱外）"
+                             Icon="{ui:SymbolIcon ArrowSort24}"
+                             Command="{Binding ViewModel.GeneralSortingCommand}">
+                    <ui:MenuItem.ToolTip>
+                        <ToolTip>
+                            <StackPanel>
+                                <TextBlock Text="按标准字段排序，不包含DP阀位顺序" FontWeight="Bold" Margin="0,0,0,5"/>
+                                <TextBlock Text="- 非FF信号：机柜号、机笼号、插槽、通道号"/>
+                                <TextBlock Text="- FF信号：机柜号、机笼号、插槽、网段、FF从站号、就地箱号"/>
+                            </StackPanel>
+                        </ToolTip>
+                    </ui:MenuItem.ToolTip>
+                </ui:MenuItem>
+                <ui:MenuItem Header="阀门排序（箱内）"
+                             Icon="{ui:SymbolIcon ArrowSortDown24}"
+                             Command="{Binding ViewModel.ValvePositionSortingCommand}">
+                    <ui:MenuItem.ToolTip>
+                        <ToolTip>
+                            <StackPanel>
+                                <TextBlock Text="仅对箱内FF信号按DP阀位顺序排序" FontWeight="Bold" Margin="0,0,0,5"/>
+                                <TextBlock Text="请先使用导入阀门顺序功能填充DP阀位顺序字段"/>
+                            </StackPanel>
+                        </ToolTip>
+                    </ui:MenuItem.ToolTip>
+                </ui:MenuItem>
+            </ui:MenuItem>
+            <ui:MenuItem Header="筛选"
+                         Icon="{ui:SymbolIcon Filter24}">
+                <ui:MenuItem Header="启用/关闭筛选"
+                             Icon="{ui:SymbolIcon Filter24}"
+                             Click="ToggleFilterMode_Click"
+                             ToolTip="点击切换列头筛选图标显示/隐藏"/>
+                <ui:MenuItem Header="重置筛选"
+                             Icon="{ui:SymbolIcon ArrowReset24}"
+                             Click="ResetFiltersMenuItem_Click"
+                             ToolTip="清除所有列筛选条件"/>
+            </ui:MenuItem>
+            <ui:MenuItem Header="批量导入"
+                         IsEnabled="{Binding ViewModel.CanEdit}"
+                         Icon="{ui:SymbolIcon ArrowImport24}"
+                         Command="{Binding ViewModel.ImportCommand}" />
+            <ui:MenuItem Header="导出">
+
+                <ui:MenuItem Header="导出到桌面并打开"
+                             Icon="{ui:SymbolIcon FolderOpen24}"
+                             Command="{Binding ViewModel.ExportToDesktopAndOpenCommand}"
+                             ToolTip="快速导出IO清单到桌面并自动打开"/>
+                <ui:MenuItem Header="动态IO清单导出" 
+                             Icon="{ui:SymbolIcon TableSettings24}"
+                             Command="{Binding ViewModel.DynamicExportCommand}"
+                             ToolTip="打开导出配置窗口，支持自定义列顺序和字段选择"/>
+                <Separator/>
+                <ui:MenuItem Header="导出主系统板卡清单"
+                             Style="{StaticResource ExportMenuItem}" />
+                <ui:MenuItem Header="导出板卡统计信息"
+                             Style="{StaticResource ExportMenuItem}" />
+                <ui:MenuItem Header="导出龙鳍数据库"
+                             Style="{StaticResource ExportMenuItem}" />
+                <ui:MenuItem Header="导出端接清单"
+                             Style="{StaticResource ExportMenuItem}" />
+                <ui:MenuItem Header="导出FF从站箱端接清单"
+                             Style="{StaticResource ExportMenuItem}" />
+                <ui:MenuItem Header="导出FF总线箱端接清单"
+                             Style="{StaticResource ExportMenuItem}" />
+                <ui:MenuItem Header="导出机柜报警表"
+                             Style="{StaticResource ExportMenuItem}" />
+            </ui:MenuItem>
+            <Separator />
+            <ui:MenuItem IsEnabled="False"
+                         Foreground="{DynamicResource TextFillColorPrimaryBrush}">
+                <ui:MenuItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <ui:TextBlock Text="总行数："
+                                      FontSize="14" />
+                        <ui:TextBlock Margin="5,0,0,0"
+                                      Text="{Binding ViewModel.AllPointCount}"
+                                      FontSize="14" />
+                    </StackPanel>
+                </ui:MenuItem.Header>
+            </ui:MenuItem>
+            <ui:MenuItem IsEnabled="False"
+                         Foreground="{DynamicResource TextFillColorPrimaryBrush}">
+                <ui:MenuItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <ui:TextBlock Text="显示行数："
+                                      FontSize="14" />
+                        <ui:TextBlock Margin="5,0,0,0"
+                                      Text="{Binding ViewModel.DisplayPointCount}"
+                                      FontSize="14" />
+                    </StackPanel>
+                </ui:MenuItem.Header>
+            </ui:MenuItem>
+        </Menu>
+
+        <ScrollViewer Grid.Row="2"
+                      VerticalScrollBarVisibility="Auto"
+                      Visibility="{Binding ElementName=ShowPoints ,Path=IsChecked, Converter={StaticResource BooleanToVisiblityInverseConverter}}">
+            <ItemsControl ItemsSource="{Binding ViewModel.AllData}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel>
+                            <ui:CardExpander>
+                                <ui:CardExpander.Header>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="机柜：" VerticalAlignment="Center"/>
+                                        <TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
+                                        <StackPanel DataContext="{Binding SummaryInfo}" Margin="10,0,0,0">
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="冗余率："/>
+                                                <ItemsControl ItemsSource="{Binding RedundancyRates}">
+                                                    <ItemsControl.ItemsPanel>
+                                                        <ItemsPanelTemplate>
+                                                            <StackPanel Orientation="Horizontal"/>
+                                                        </ItemsPanelTemplate>
+                                                    </ItemsControl.ItemsPanel>
+                                                    <ItemsControl.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <TextBlock Text="{Binding CardType}"/>
+                                                                <TextBlock Text="："/>
+                                                                <TextBlock Text="{Binding Rate}">
+                                                                    <TextBlock.Foreground>
+                                                                        <MultiBinding Converter="{StaticResource RateToBrushConverter}">
+                                                                            <Binding Path="Rate"/>
+                                                                            <Binding RelativeSource="{RelativeSource AncestorType=local:DepXT2Page}" Path="ViewModel.RedundancyRate"/>
+                                                                        </MultiBinding>
+                                                                    </TextBlock.Foreground>
+                                                                </TextBlock>
+                                                                <TextBlock Text=" % "/>
+                                                            </StackPanel>
+                                                        </DataTemplate>
+                                                    </ItemsControl.ItemTemplate>
+                                                </ItemsControl>
+                                            </StackPanel>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="总点数："/>
+                                                <TextBlock Text="{Binding TotalPoints.Number}" Foreground="{Binding TotalPoints.Illegal, Converter={StaticResource BoolToBrushConverter}}"/>
+                                                <TextBlock Text=" 备份点数量："/>
+                                                <TextBlock Text="{Binding BackupPoints.Number}" Foreground="{Binding BackupPoints.Illegal, Converter={StaticResource BoolToBrushConverter}}"/>
+                                                <TextBlock Text=" 报警点数量："/>
+                                                <TextBlock Text="{Binding AlarmPoints.Number}" Foreground="{Binding AlarmPoints.Illegal, Converter={StaticResource BoolToBrushConverter}}"/>
+                                                <TextBlock Text=" 一般点数量："/>
+                                                <TextBlock Text="{Binding NormalPoints.Number}" Foreground="{Binding NormalPoints.Illegal, Converter={StaticResource BoolToBrushConverter}}"/>
+                                                <TextBlock Text=" 未分配点数量："/>
+                                                <TextBlock Text="{Binding UnsetPoints.Number}" Foreground="{Binding UnsetPoints.Illegal, Converter={StaticResource BoolToBrushConverter}}"/>
+                                                <TextBlock Text=" 未分配端子板数量："/>
+                                                <TextBlock Text="{Binding UnsetBoards.Number}" Foreground="{Binding UnsetBoards.Illegal, Converter={StaticResource BoolToBrushConverter}}"/>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </ui:CardExpander.Header>
+                                <StackPanel>
+                                    <ItemsControl ItemsSource="{Binding Cages}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <ui:CardExpander>
+                                                    <ui:CardExpander.Header>
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <TextBlock Text="机笼：" />
+                                                            <TextBlock Text="{Binding Index}" />
+                                                        </StackPanel>
+                                                    </ui:CardExpander.Header>
+                                                    <ItemsControl ItemsSource="{Binding Slots}">
+                                                        <ItemsControl.ItemTemplate>
+                                                            <DataTemplate>
+                                                                <ui:CardExpander>
+                                                                    <ui:CardExpander.Header>
+                                                                        <StackPanel Orientation="Horizontal">
+                                                                            <TextBlock Text="插槽：" />
+                                                                            <TextBlock Text="{Binding Index}" />
+                                                                            <TextBlock Text=" [" />
+                                                                            <TextBlock Text="{Binding Board.Type}" />
+                                                                            <TextBlock Text="]" />
+                                                                        </StackPanel>
+                                                                    </ui:CardExpander.Header>
+                                                                    <cus:CustomDataGrid ItemsSource="{Binding Board.Channels}"
+                                                                                        Style="{StaticResource DataGridStyle}"
+                                                                                        AutoGenerateColumns="True">
+                                                                    </cus:CustomDataGrid>
+                                                                </ui:CardExpander>
+                                                            </DataTemplate>
+                                                        </ItemsControl.ItemTemplate>
+                                                    </ItemsControl>
+                                                </ui:CardExpander>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                    <!-- 展示未分配板卡 -->
+                                    <ItemsControl ItemsSource="{Binding UnsetBoards}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <ui:CardExpander>
+                                                    <ui:CardExpander.Header>
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <TextBlock Text="未分配板卡：" />
+                                                            <TextBlock Text="{Binding Type}" />
+                                                        </StackPanel>
+                                                    </ui:CardExpander.Header>
+                                                    <cus:CustomDataGrid ItemsSource="{Binding Channels}" AutoGenerateColumns="True"
+                                                                 Style="{StaticResource DataGridStyle}">
+                                                    </cus:CustomDataGrid>
+                                                </ui:CardExpander>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+
+                                    <!-- 展示未分配点 -->
+                                    <ui:CardExpander>
+                                        <ui:CardExpander.Header>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="未分配点：" />
+                                            </StackPanel>
+                                        </ui:CardExpander.Header>
+                                        <cus:CustomDataGrid ItemsSource="{Binding UnsetPoints}" AutoGenerateColumns="True"
+                                                     Style="{StaticResource DataGridStyle}">
+                                        </cus:CustomDataGrid>
+                                    </ui:CardExpander>
+                                </StackPanel>
+
+                            </ui:CardExpander>
+
+                        </StackPanel>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+
+        <cus:CustomDataGrid  Grid.Row="2"
+                     x:Name="MainDataGrid"
+                     ItemsSource="{Binding ViewModel.DisplayPoints}"
+                     Loaded="DataGrid_Loaded"
+                     Unloaded="DataGrid_Unloaded"
+                     Visibility="{Binding ElementName=ShowPoints ,Path=IsChecked, Converter={StaticResource BooleanToVisiblityConverter}}"
+                     AutoGenerateColumns="True"
+                     CanUserAddRows="False"
+                     FrozenColumnCount="1"
+                     Style="{StaticResource DataGridStyle}">
+            <DataGrid.Columns>
+                <DataGridTemplateColumn Width="108"
+                                        Header="操作">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <ui:Button Content="编辑"
+                                           CommandParameter="{Binding}"
+                                           Command="{Binding ViewModel.EditCommand, RelativeSource={RelativeSource AncestorType=local:DepXT2Page}}" />
+                                <ui:Button Margin="2,0,0,0"
+                                           Appearance="Danger"
+                                           Icon="{ui:SymbolIcon Delete24}"
+                                           CommandParameter="{Binding}"
+                                           Command="{Binding ViewModel.DeleteCommand, RelativeSource={RelativeSource AncestorType=local:DepXT2Page}}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </cus:CustomDataGrid>
+ 
+        <ui:Flyout Grid.Column="100" Grid.RowSpan="100" Placement="MousePoint" IsOpen="{Binding ViewModel.IsTotalSummaryFlyoutOpen, Mode=TwoWay}">
+            <StackPanel DataContext="{Binding ViewModel.TotalSummaryInfo}">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="总点数："/>
+                    <TextBlock Text="{Binding TotalPoints.Number}" Foreground="{Binding TotalPoints.Illegal, Converter={StaticResource BoolToBrushConverter}}"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="备份点数量："/>
+                    <TextBlock Text="{Binding BackupPoints.Number}" Foreground="{Binding BackupPoints.Illegal, Converter={StaticResource BoolToBrushConverter}}"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="报警点数量："/>
+                    <TextBlock Text="{Binding AlarmPoints.Number}" Foreground="{Binding AlarmPoints.Illegal, Converter={StaticResource BoolToBrushConverter}}"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="一般点数量："/>
+                    <TextBlock Text="{Binding NormalPoints.Number}" Foreground="{Binding NormalPoints.Illegal, Converter={StaticResource BoolToBrushConverter}}"/>
+                </StackPanel>
+                <StackPanel>
+                    <TextBlock Text="冗余率："/>
+                    <ItemsControl ItemsSource="{Binding RedundancyRates}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding CardType}"/>
+                                    <TextBlock Text=" : "/>
+                                    <TextBlock Text="{Binding Rate}">
+                                        <TextBlock.Foreground>
+                                            <MultiBinding Converter="{StaticResource RateToBrushConverter}">
+                                                <Binding Path="Rate"/>
+                                                <Binding RelativeSource="{RelativeSource AncestorType=local:DepXT2Page}" Path="ViewModel.RedundancyRate"/>
+                                            </MultiBinding>
+                                        </TextBlock.Foreground>
+                                    </TextBlock>
+                                    <TextBlock Text=" %"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </StackPanel>
+        </ui:Flyout>
+        
+    </Grid>
+</Page>

@@ -1,0 +1,81 @@
+﻿<Page x:Class="IODataPlatform.Views.SubPages.AQJ.ConfigSignalGroupPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="clr-namespace:IODataPlatform.Views.SubPages.AQJ"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      mc:Ignorable="d"
+      d:DesignHeight="450"
+      ui:NavigationView.HeaderContent="修改信号类型"
+      d:DesignWidth="800"
+      Title="ConfigSignalGroupPage">
+
+    <Grid>
+        <StackPanel>
+            <StackPanel Orientation="Horizontal"
+                        Margin="0,0,0,5">
+                <ui:TextBlock Text="信号组列表"
+                              VerticalAlignment="Center" />
+                <ui:Button Margin="10,0,0,0"
+                           Icon="{ui:SymbolIcon Add24}"
+                           Appearance="Primary"
+                           Command="{Binding ViewModel.AddSignalGroupCommand}" />
+                <ui:Button Margin="10,0,0,0"
+                           ToolTip="选择文件夹导入"
+                           Icon="{ui:SymbolIcon TableMoveBelow28}"
+                           Appearance="Primary"
+                           Command="{Binding ViewModel.ImportFilesCommand}">批量导入</ui:Button>
+            </StackPanel>
+            <ui:DataGrid Style="{StaticResource DataGridStyle}"
+                         ItemsSource="{Binding ViewModel.SignalGroups}">
+                <ui:DataGrid.Columns>
+                    <DataGridTemplateColumn Header="操作"
+                                            Width="105">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <ui:Button  Icon="{ui:SymbolIcon Edit24}"
+                                                Appearance="Primary"
+                                                CommandParameter="{Binding}"
+                                                Margin="2"
+                                                Command="{Binding RelativeSource={RelativeSource AncestorType=local:ConfigSignalGroupPage}, Path=ViewModel.EditSignalGroupCommand}" />
+                                    <ui:Button Icon="{ui:SymbolIcon Delete24}"
+                                               CommandParameter="{Binding}"
+                                               Appearance="Danger"
+                                               Command="{Binding RelativeSource={RelativeSource AncestorType=local:ConfigSignalGroupPage}, Path=ViewModel.DeleteSignalGroupCommand}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="配置表"
+                                            Width="120">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="1">
+                                    <ui:HyperlinkButton  Content="配置信号详情"
+                                                         Margin="1"
+                                                         Command="{Binding RelativeSource={RelativeSource AncestorType=local:ConfigSignalGroupPage}, Path=ViewModel.ConfigureSystemCommand}"
+                                                         CommandParameter="{Binding}"></ui:HyperlinkButton>
+
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Width="120"
+                                        Header="信号组名称"
+                                        Binding="{Binding signalGroupName}"
+                                        ElementStyle="{StaticResource DataGridTextBlockCellStyle_Center}" />
+                    <DataGridTextColumn Width="100"
+                                        Header="创建日期"
+                                        Binding="{Binding Creation, StringFormat=yyyy-MM-dd}"
+                                        ElementStyle="{StaticResource DataGridTextBlockCellStyle_Center}" />
+                    <DataGridTextColumn Width="*"
+                                        Header="备注"
+                                        Binding="{Binding Note}" />
+                </ui:DataGrid.Columns>
+            </ui:DataGrid>
+        </StackPanel>
+    </Grid>
+</Page>

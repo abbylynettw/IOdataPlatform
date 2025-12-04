@@ -1,0 +1,92 @@
+<Page x:Class="IODataPlatform.Views.SubPages.OtherFunction.ExtractExcelToNetListPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:IODataPlatform.Views.SubPages.OtherFunction"    
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      d:DataContext="{d:DesignInstance Type=local:ExtractExcelToNetListViewModel}"
+      ui:NavigationView.HeaderContent="生成网络接线清单"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="ExtractExcelToNetListPage">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+       
+
+        <StackPanel Grid.Row="0"
+                    Grid.ColumnSpan="100"                    
+                    Orientation="Horizontal">
+            <ui:Button Content="上传模板"
+                       IsEnabled="False"
+                       Appearance="Primary"
+                       Margin="10,0,0,0"
+                       Command="{Binding ViewModel.UpLoadTemplateCommand}"
+                       VerticalAlignment="Center" />
+            <ui:Button Icon="{ui:SymbolIcon Add24}"
+                       Appearance="Primary"
+                       ToolTip="添加IP表和配置信息统计表"
+                       Margin="10,0,0,0"
+                       Command="{Binding ViewModel.AppendFilesCommand}"
+                       VerticalAlignment="Center" />
+            <ui:Button Margin="10,0,0,0"
+                       Appearance="Caution"
+                       Content="清空"
+                       Command="{Binding ViewModel.RemoveAllFilesCommand}"
+                       VerticalAlignment="Center" />
+            <ui:Button Margin="10,0,0,0"
+                       Content="开始提取"
+                       Appearance="Success"
+                       Command="{Binding ViewModel.ConfirmCommand}"
+                       VerticalAlignment="Center" />
+            <ui:Button Margin="10,0,0,0"
+                       Content="网络接线清单对比"
+                       Icon="{ui:SymbolIcon ArrowSync24}"
+                       Appearance="Secondary"
+                       Command="{Binding ViewModel.OpenNetListComparisonCommand}"
+                       VerticalAlignment="Center" />
+            <ui:HyperlinkButton Margin="10,0,0,0"
+                                Icon="{ui:SymbolIcon Link24}"
+                                Command="{Binding ViewModel.SetDestCommand}"
+                                Content="{Binding ViewModel.Dest}"
+                                VerticalAlignment="Center" />
+        </StackPanel>
+
+        <ui:DataGrid Grid.Row="1"
+                     Margin="0,10"
+                     ItemsSource="{Binding ViewModel.ExcelFiles}"
+                     Style="{StaticResource DataGridStyle}">
+            <ui:DataGrid.Columns>
+                <DataGridTextColumn Width="*"
+                                    Header="文件"
+                                    Binding="{Binding FullName}" />
+                <DataGridTextColumn Width="120"
+                                    Header="状态"
+                                    Binding="{Binding Result}"
+                                    ElementStyle="{StaticResource DataGridTextBlockCellStyle_Center}" />
+                <DataGridTemplateColumn Width="162"
+                                        Header="操作">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <ui:Button Content="移除"
+                                           Appearance="Danger"
+                                           CommandParameter="{Binding}"
+                                           Command="{Binding RelativeSource={RelativeSource AncestorType=local:ExtractExcelToNetListPage}, Path=ViewModel.RemovePdfFileCommand}" />
+                                <ui:Button Margin="2,0,0,0"
+                                           Content="打开结果文件"
+                                           CommandParameter="{Binding}"
+                                           Command="{Binding RelativeSource={RelativeSource AncestorType=local:ExtractExcelToNetListPage}, Path=ViewModel.OpenPdfDestFileCommand}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </ui:DataGrid.Columns>
+        </ui:DataGrid>
+    </Grid>
+</Page>

@@ -1,0 +1,29 @@
+﻿<Application x:Class="IODataPlatform.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:converters="clr-namespace:IODataPlatform.Converters"
+             DispatcherUnhandledException="OnDispatcherUnhandledException"             
+             Exit="OnExit"
+             Startup="OnStartup">
+
+    <!-- 定义应用程序资源 -->
+    <Application.Resources>
+
+        <ResourceDictionary>
+            <!-- 添加转换器资源 -->
+            <converters:StringToBrushConverter x:Key="StringToBrushConverter" />
+            
+            <!-- 合并字典，用于共享资源 -->
+            <ResourceDictionary.MergedDictionaries>
+                <!-- 添加自定义主题字典，设置主题为Light -->
+                <ui:ThemesDictionary Theme="Light" />
+                <!-- 添加自定义控件字典 -->
+                <ui:ControlsDictionary />
+
+                <!-- 引入外部资源字典 -->
+                <ResourceDictionary Source="ResourceDictionaries/Index.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

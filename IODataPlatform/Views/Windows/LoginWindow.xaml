@@ -1,0 +1,88 @@
+﻿<ui:FluentWindow x:Class="IODataPlatform.Views.Windows.LoginWindow"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+                 Foreground="White"
+                 ExtendsContentIntoTitleBar="True"
+                 WindowBackdropType="Mica"
+                 WindowCornerPreference="Round"
+                 WindowStartupLocation="CenterScreen"
+                 mc:Ignorable="d"
+                 Title="LoginWindow"
+                 Width="950"
+                 Height="600">
+    <Grid KeyUp="Grid_KeyUp"
+          Background="#104E8B">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition> 
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+            <ColumnDefinition Width="400"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <!-- 标题栏 -->
+        <ui:TitleBar Title="{Binding ViewModel.ApplicationTitle}"
+                     FontSize="15"
+                     Grid.ColumnSpan="2"
+                     Foreground="DarkBlue"
+                     Background="White"
+                     CloseWindowByDoubleClickOnIcon="True">
+
+            <!-- 标题栏图标 -->
+            <ui:TitleBar.Icon>
+                <ui:ImageIcon Source="pack://application:,,,/Assets/logo.png"
+                              VerticalAlignment="Center" />
+            </ui:TitleBar.Icon>
+        </ui:TitleBar>
+
+        <!-- 左侧GIF展示 -->
+        <Image Grid.Row="1"              
+               Grid.Column="0"  
+               Margin="55 0 10 10"
+               Stretch="Fill"
+               x:Name="gifImage" Opacity="0.9" />
+        <!-- 登录框 -->
+        <!-- 将登录框置于中间 -->
+       <ui:Card HorizontalAlignment="Center" Grid.Row="1"  Grid.Column="1"  Background="White"
+                 VerticalAlignment="Center"        
+                 MaxWidth="320">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="140"></RowDefinition>
+                    <RowDefinition Height="auto"></RowDefinition>
+                    <RowDefinition Height="auto"></RowDefinition>
+                </Grid.RowDefinitions>
+               <Image Source="pack://application:,,,/Assets/logo.png" 
+                       Margin="10"
+                       HorizontalAlignment="Center" />
+
+                <StackPanel Width="150"
+                            Grid.Row="3"
+                            Margin="10 0 10 0">
+                    <Separator Height="3"></Separator>
+                    <ui:TextBlock Text="用户登录"
+                                  FontSize="20"
+                                  Foreground="#283f8b"
+                                  Margin="10"
+                                  HorizontalAlignment="Center" />
+                    <ui:PasswordBox Margin="0,10"
+                                    Password="{Binding ViewModel.Account, Mode=TwoWay}"
+                                    PlaceholderText="请输入口令" />
+                    <ui:Button Icon="{ui:SymbolIcon Send24}"
+                               Appearance="Primary"
+                               Command="{Binding ViewModel.LoginCommand}"
+                               Content="登录"
+                               Margin="0,10,0,0"
+                               HorizontalAlignment="Stretch" />
+                </StackPanel>
+            </Grid>
+        </ui:Card>
+
+        <!-- 消息提示条 -->
+        <ui:SnackbarPresenter x:Name="SnackbarPresenter" Grid.Row="2"/>
+    </Grid>
+</ui:FluentWindow>

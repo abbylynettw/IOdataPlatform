@@ -1,0 +1,246 @@
+﻿<Page x:Class="IODataPlatform.Views.Pages.HomePage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:IODataPlatform.Views.Pages"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      d:DataContext="{d:DesignInstance Type=local:HomeViewModel}"    
+      mc:Ignorable="d"
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="HomePage">
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" Margin="0 0 0 0"
+                Height="200"
+                CornerRadius="8">
+            <Border.Background>
+                <ImageBrush ImageSource="pack://application:,,,/Assets/pexels-johannes-plenio-1103970.jpg"
+                            RenderOptions.BitmapScalingMode="HighQuality"
+                            Stretch="UniformToFill" />
+            </Border.Background>
+            <Border CornerRadius="8">
+                <Border.Background>
+                    <RadialGradientBrush>
+                        <GradientStop Offset="0"
+                                      Color="#1F000000" />
+                        <GradientStop Offset="1"
+                                      Color="#4F000000" />
+                    </RadialGradientBrush>
+                </Border.Background>
+                <Grid>
+                    <StackPanel Margin="48,0"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                Background="Transparent">
+                        <ui:TextBlock FontTypography="Title"
+                                      Foreground="#FFFFFF"
+                                      Text="欢迎使用IO数据管理平台," />
+                        <ui:TextBlock FontTypography="BodyStrong"
+                                      Margin="0 20 0 0"
+                                      Foreground="#B7FFFFFF">
+                            <TextBlock>Welcome,</TextBlock>
+                            <TextBlock Text="{Binding ViewModel.User.DisplayText}"></TextBlock>
+                            <TextBlock>!</TextBlock>
+                        </ui:TextBlock>
+
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Border>
+      
+        <Grid Grid.Row="1"
+              Margin="0,24,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <ui:CardAction Grid.Row="0"
+                           Grid.Column="0"
+                           Margin="0,0,4,0"
+                           Padding="0"
+                           VerticalAlignment="Stretch"
+                           Command="{Binding ViewModel.CardClickCommand, Mode=OneWay}"
+                           CommandParameter="BasicInput"
+                           IsChevronVisible="False">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Image Width="60"
+                           Margin="24,0,0,0"
+                           Source="pack://application:,,,/Assets/WinUiGallery/Bug.png" />
+
+                    <StackPanel Grid.Column="1"
+                                Margin="24"
+                                VerticalAlignment="Center">
+                        <ui:TextBlock Margin="0"
+                                      FontTypography="BodyStrong"
+                                      Text="用户反馈"
+                                      TextWrapping="WrapWithOverflow" />
+                        <ui:Anchor Margin="0,8,0,0"
+                                   Background="AliceBlue"
+                                   Icon="{ui:SymbolIcon Link24}"
+                                   Padding="4"
+                                   Content="点此提交需求，反馈缺陷"
+                                   NavigateUri="{Binding ViewModel.ZentaoUrl}"
+                                   ToolTip="默认用户名 姓名全拼，密码123456" />
+                    </StackPanel>
+                </Grid>
+            </ui:CardAction>
+            <ui:CardAction Grid.Row="0"
+                           Grid.Column="2"
+                           Margin="4,0,4,0"
+                           Padding="0"
+                           VerticalAlignment="Stretch"
+                           Command="{Binding ViewModel.CardClickCommand, Mode=OneWay}"
+                           CommandParameter="Navigation"
+                           IsChevronVisible="False">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Image Width="60"
+                           Margin="24,0,0,0"
+                           Source="pack://application:,,,/Assets/WinUiGallery/MenuBar.png" />
+
+                    <StackPanel Grid.Column="1"
+                                Margin="24"
+                                VerticalAlignment="Center">
+                        <ui:TextBlock Margin="0"
+                                      FontTypography="BodyStrong"
+                                      Text="帮助"
+                                      TextWrapping="WrapWithOverflow" />
+                        <ui:Button Appearance="Secondary"
+                                      Margin="0,9,0,0"
+                                     Content="下载用户手册"  Command="{Binding ViewModel.DownLoadHelpDocCommand}"/>
+                    </StackPanel>
+                </Grid>
+            </ui:CardAction>
+            
+            <ui:CardAction Grid.Row="0"
+                           Grid.Column="1"
+                           Margin="4,0,4,0"
+                           Padding="0"
+                           VerticalAlignment="Stretch"
+                           Command="{Binding ViewModel.CardClickCommand, Mode=OneWay}"
+                           CommandParameter="DialogsAndFlyouts"
+                           IsChevronVisible="False">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Image Width="60"
+                           Margin="24,0,0,0"
+                           Source="pack://application:,,,/Assets/WinUiGallery/Flyout.png" />
+
+                    <StackPanel Grid.Column="1"
+                                Margin="24"
+                                VerticalAlignment="Center">
+                        <ui:TextBlock Margin="0"
+                                      FontTypography="BodyStrong"
+                                      Text="工作记录"
+                                      TextWrapping="WrapWithOverflow" />
+
+                        <ui:Anchor Margin="0,8,0,0"
+                                   Background="AliceBlue"
+                                   Icon="{ui:SymbolIcon Link24}"
+                                   Padding="4"
+                                   Content="点此记录任务及成果"
+                                   Command="{Binding ViewModel.GoWorkPageCommand}"
+                                   ToolTip="默认用户名 姓名全拼，密码123456" />
+                    </StackPanel>
+                </Grid>
+            </ui:CardAction>
+
+        </Grid>
+        <!--链接--><!--
+        <ui:TextBlock Margin="0,24,0,8"
+                      Grid.Row="2"
+                      FontTypography="BodyStrong"                     
+                      Text="链接" />
+        <StackPanel Grid.Row="3" Orientation="Horizontal">
+            <ui:Button Content="禅道"
+                       Icon="{ui:ImageIcon 'pack://application:,,,/Assets/wpfui.png'}" />
+            <ui:Button Content="禅道"
+                       Icon="{ui:ImageIcon 'pack://application:,,,/Assets/wpfui.png'}" />
+        </StackPanel>-->
+
+        <!--关于-->
+        <ui:TextBlock Margin="0,24,0,8" Grid.Row="2"
+                      FontTypography="BodyStrong"
+                      Text="关于" />
+        <ui:CardExpander ContentPadding="0" Grid.Row="3"
+                         Icon="{ui:ImageIcon 'pack://application:,,,/Assets/wpfui.png', Width=38, Height=35}">
+            <ui:CardExpander.Header>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <ui:TextBlock Grid.Row="0"
+                                  Grid.Column="0"
+                                  FontTypography="Body"
+                                  Text="IO数据管理软件" />
+                    <ui:TextBlock Grid.Row="1"
+                                  Grid.Column="0"
+                                  Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
+                                  Text="© 2024" />
+                    <TextBlock Grid.Row="0"
+                               Grid.RowSpan="2"
+                               Grid.Column="1"
+                               Margin="0,0,16,0"
+                               VerticalAlignment="Center"
+                               Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
+                               Text="{Binding ViewModel.AppVersion, Mode=OneWay}" />
+                </Grid>
+            </ui:CardExpander.Header>
+            <StackPanel>
+                <StackPanel Orientation="Horizontal"
+                            Margin="16 5 0 0">
+                    <ui:SymbolIcon Symbol="CheckmarkStarburst24"
+                                   Height="auto"></ui:SymbolIcon>
+                    <TextBlock Margin="16 10"
+                               Text="{Binding ViewModel.AppVersion, Mode=OneWay}" />
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal"
+                            Margin="16 5 0 0">
+                    <ui:SymbolIcon Symbol="CalendarLtr48"
+                                   Height="auto"></ui:SymbolIcon>
+                    <TextBlock Margin="16"
+                               Text="2024-7-12" />
+                </StackPanel>
+            </StackPanel>
+        </ui:CardExpander>
+        <ui:TextBlock Grid.Row="5" VerticalAlignment="Bottom"
+                      FontTypography="Subtitle"
+                      FontSize="14"
+                     Appearance="Secondary"
+                      HorizontalAlignment="Center"
+                      Text="声明：软件可能存在错误，请核查重要信息。" />
+    </Grid>
+</Page>

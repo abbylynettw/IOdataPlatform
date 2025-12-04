@@ -1,0 +1,235 @@
+<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+  <PropertyGroup>
+    <AssemblyName>IODataPlatform</AssemblyName>
+    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+    <OutputType>WinExe</OutputType>
+    <UseWPF>True</UseWPF>
+    <TargetFramework>netcoreapp8.0</TargetFramework>
+  </PropertyGroup>
+  <PropertyGroup>
+    <LangVersion>12.0</LangVersion>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>app.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <RootNamespace />
+  </PropertyGroup>
+  <ItemGroup>
+    <None Remove="views\subpages\cable\matchpage.baml" />
+    <None Remove="views\windows\exportconfigwindow.baml" />
+    <None Remove="views\pages\documentmanagementpage.baml" />
+    <None Remove="views\subpages\export\draggablecolumnpanel.baml" />
+    <None Remove="views\pages\depxt1page.baml" />
+    <None Remove="views\pages\settingspage.baml" />
+    <None Remove="views\subpages\common\commonduanjiepublishpage.baml" />
+    <None Remove="views\subpages\common\extractpdfpage.baml" />
+    <None Remove="assets\winuigallery\button.png" />
+    <None Remove="views\subpages\common\netlistcomparisonpage.baml" />
+    <None Remove="views\pages\datacomparepage.baml" />
+    <None Remove="views\pages\cablepage.baml" />
+    <None Remove="views\subpages\common\cabinetallocatedpage.baml" />
+    <None Remove="views\pages\paperpage.baml" />
+    <None Remove="views\subpages\common\genericdatacomparisonpage.baml" />
+    <None Remove="resourcedictionaries\datagridstyles.baml" />
+    <None Remove="assets\pexels-johannes-plenio-1103970.jpg" />
+    <None Remove="splashscreen.png" />
+    <None Remove="views\subpages\aqj\configsignalgrouppage.baml" />
+    <None Remove="views\windows\reservedslotconfigwindow.baml" />
+    <None Remove="views\subpages\common\commonconfigtablepage.baml" />
+    <None Remove="views\pages\otherfunctionpage.baml" />
+    <None Remove="views\subpages\otherfunction\extractexceltonetlistpage.baml" />
+    <None Remove="views\subpages\common\selectexcelsheetdialog.baml" />
+    <None Remove="views\subpages\aqj\importpage.baml" />
+    <None Remove="views\pages\homepage.baml" />
+    <None Remove="views\subpages\paper\editdevicepage.baml" />
+    <None Remove="assets\winuigallery\menubar.png" />
+    <None Remove="views\subpages\project\subprojectpage.baml" />
+    <None Remove="views\pages\depxt2page.baml" />
+    <None Remove="views\pages\depaqjpage.baml" />
+    <None Remove="views\windows\loginwindow.baml" />
+    <None Remove="views\subpages\common\commonpublishpage.baml" />
+    <None Remove="views\windows\markdowneditorwindow.baml" />
+    <None Remove="views\subpages\xt2\importpage.baml" />
+    <None Remove="assets\winuigallery\bug.png" />
+    <None Remove="assets\wpfui.png" />
+    <None Remove="assets\logo.png" />
+    <None Remove="views\pages\projectpage.baml" />
+    <None Remove="views\subpages\cable\publishpage.baml" />
+    <None Remove="views\subpages\paper\uploadpaperpage.baml" />
+    <None Remove="assets\winuigallery\flyout.png" />
+    <None Remove="views\pages\depyjpage.baml" />
+    <None Remove="views\subpages\project\majorpage.baml" />
+    <None Remove="assets\loginbg3.gif" />
+    <None Remove="resourcedictionaries\index.baml" />
+    <None Remove="views\pages\formulaeditorpage.baml" />
+    <None Remove="views\windows\valvesortingwindow.baml" />
+    <None Remove="views\subpages\yj\importpage.baml" />
+    <None Remove="views\subpages\aqj\configsignalgroupdetailpage.baml" />
+    <None Remove="views\pages\terminationpage.baml" />
+    <None Remove="views\subpages\termination\importpage.baml" />
+    <None Remove="views\windows\mainwindow.baml" />
+    <None Remove="views\subpages\xt1\importpage.baml" />
+    <None Remove="views\subpages\xt2\uploadexceldatapage.baml" />
+    <None Remove="app.baml" />
+    <None Remove="views\windows\excelfilterwindow.baml" />
+    <None Remove="views\windows\columnselectionwindow.baml" />
+    <None Remove="views\pages\dataassetcenterpage.baml" />
+    <None Remove="views\subpages\common\commonmatchmajor.baml" />
+    <EmbeddedResource Include="views\subpages\cable\matchpage.baml" LogicalName="views/subpages/cable/matchpage.baml" />
+    <EmbeddedResource Include="views\windows\exportconfigwindow.baml" LogicalName="views/windows/exportconfigwindow.baml" />
+    <EmbeddedResource Include="views\pages\documentmanagementpage.baml" LogicalName="views/pages/documentmanagementpage.baml" />
+    <EmbeddedResource Include="views\subpages\export\draggablecolumnpanel.baml" LogicalName="views/subpages/export/draggablecolumnpanel.baml" />
+    <EmbeddedResource Include="views\pages\depxt1page.baml" LogicalName="views/pages/depxt1page.baml" />
+    <EmbeddedResource Include="views\pages\settingspage.baml" LogicalName="views/pages/settingspage.baml" />
+    <EmbeddedResource Include="views\subpages\common\commonduanjiepublishpage.baml" LogicalName="views/subpages/common/commonduanjiepublishpage.baml" />
+    <EmbeddedResource Include="views\subpages\common\extractpdfpage.baml" LogicalName="views/subpages/common/extractpdfpage.baml" />
+    <EmbeddedResource Include="assets\winuigallery\button.png" LogicalName="assets/winuigallery/button.png" />
+    <EmbeddedResource Include="views\subpages\common\netlistcomparisonpage.baml" LogicalName="views/subpages/common/netlistcomparisonpage.baml" />
+    <EmbeddedResource Include="views\pages\datacomparepage.baml" LogicalName="views/pages/datacomparepage.baml" />
+    <EmbeddedResource Include="views\pages\cablepage.baml" LogicalName="views/pages/cablepage.baml" />
+    <EmbeddedResource Include="views\subpages\common\cabinetallocatedpage.baml" LogicalName="views/subpages/common/cabinetallocatedpage.baml" />
+    <EmbeddedResource Include="views\pages\paperpage.baml" LogicalName="views/pages/paperpage.baml" />
+    <EmbeddedResource Include="views\subpages\common\genericdatacomparisonpage.baml" LogicalName="views/subpages/common/genericdatacomparisonpage.baml" />
+    <EmbeddedResource Include="resourcedictionaries\datagridstyles.baml" LogicalName="resourcedictionaries/datagridstyles.baml" />
+    <EmbeddedResource Include="assets\pexels-johannes-plenio-1103970.jpg" LogicalName="assets/pexels-johannes-plenio-1103970.jpg" />
+    <EmbeddedResource Include="splashscreen.png" LogicalName="splashscreen.png" />
+    <EmbeddedResource Include="views\subpages\aqj\configsignalgrouppage.baml" LogicalName="views/subpages/aqj/configsignalgrouppage.baml" />
+    <EmbeddedResource Include="views\windows\reservedslotconfigwindow.baml" LogicalName="views/windows/reservedslotconfigwindow.baml" />
+    <EmbeddedResource Include="views\subpages\common\commonconfigtablepage.baml" LogicalName="views/subpages/common/commonconfigtablepage.baml" />
+    <EmbeddedResource Include="views\pages\otherfunctionpage.baml" LogicalName="views/pages/otherfunctionpage.baml" />
+    <EmbeddedResource Include="views\subpages\otherfunction\extractexceltonetlistpage.baml" LogicalName="views/subpages/otherfunction/extractexceltonetlistpage.baml" />
+    <EmbeddedResource Include="views\subpages\common\selectexcelsheetdialog.baml" LogicalName="views/subpages/common/selectexcelsheetdialog.baml" />
+    <EmbeddedResource Include="views\subpages\aqj\importpage.baml" LogicalName="views/subpages/aqj/importpage.baml" />
+    <EmbeddedResource Include="views\pages\homepage.baml" LogicalName="views/pages/homepage.baml" />
+    <EmbeddedResource Include="views\subpages\paper\editdevicepage.baml" LogicalName="views/subpages/paper/editdevicepage.baml" />
+    <EmbeddedResource Include="assets\winuigallery\menubar.png" LogicalName="assets/winuigallery/menubar.png" />
+    <EmbeddedResource Include="views\subpages\project\subprojectpage.baml" LogicalName="views/subpages/project/subprojectpage.baml" />
+    <EmbeddedResource Include="views\pages\depxt2page.baml" LogicalName="views/pages/depxt2page.baml" />
+    <EmbeddedResource Include="views\pages\depaqjpage.baml" LogicalName="views/pages/depaqjpage.baml" />
+    <EmbeddedResource Include="views\windows\loginwindow.baml" LogicalName="views/windows/loginwindow.baml" />
+    <EmbeddedResource Include="views\subpages\common\commonpublishpage.baml" LogicalName="views/subpages/common/commonpublishpage.baml" />
+    <EmbeddedResource Include="views\windows\markdowneditorwindow.baml" LogicalName="views/windows/markdowneditorwindow.baml" />
+    <EmbeddedResource Include="views\subpages\xt2\importpage.baml" LogicalName="views/subpages/xt2/importpage.baml" />
+    <EmbeddedResource Include="assets\winuigallery\bug.png" LogicalName="assets/winuigallery/bug.png" />
+    <EmbeddedResource Include="assets\wpfui.png" LogicalName="assets/wpfui.png" />
+    <EmbeddedResource Include="assets\logo.png" LogicalName="assets/logo.png" />
+    <EmbeddedResource Include="views\pages\projectpage.baml" LogicalName="views/pages/projectpage.baml" />
+    <EmbeddedResource Include="views\subpages\cable\publishpage.baml" LogicalName="views/subpages/cable/publishpage.baml" />
+    <EmbeddedResource Include="views\subpages\paper\uploadpaperpage.baml" LogicalName="views/subpages/paper/uploadpaperpage.baml" />
+    <EmbeddedResource Include="assets\winuigallery\flyout.png" LogicalName="assets/winuigallery/flyout.png" />
+    <EmbeddedResource Include="views\pages\depyjpage.baml" LogicalName="views/pages/depyjpage.baml" />
+    <EmbeddedResource Include="views\subpages\project\majorpage.baml" LogicalName="views/subpages/project/majorpage.baml" />
+    <EmbeddedResource Include="assets\loginbg3.gif" LogicalName="assets/loginbg3.gif" />
+    <EmbeddedResource Include="resourcedictionaries\index.baml" LogicalName="resourcedictionaries/index.baml" />
+    <EmbeddedResource Include="views\pages\formulaeditorpage.baml" LogicalName="views/pages/formulaeditorpage.baml" />
+    <EmbeddedResource Include="views\windows\valvesortingwindow.baml" LogicalName="views/windows/valvesortingwindow.baml" />
+    <EmbeddedResource Include="views\subpages\yj\importpage.baml" LogicalName="views/subpages/yj/importpage.baml" />
+    <EmbeddedResource Include="views\subpages\aqj\configsignalgroupdetailpage.baml" LogicalName="views/subpages/aqj/configsignalgroupdetailpage.baml" />
+    <EmbeddedResource Include="views\pages\terminationpage.baml" LogicalName="views/pages/terminationpage.baml" />
+    <EmbeddedResource Include="views\subpages\termination\importpage.baml" LogicalName="views/subpages/termination/importpage.baml" />
+    <EmbeddedResource Include="views\windows\mainwindow.baml" LogicalName="views/windows/mainwindow.baml" />
+    <EmbeddedResource Include="views\subpages\xt1\importpage.baml" LogicalName="views/subpages/xt1/importpage.baml" />
+    <EmbeddedResource Include="views\subpages\xt2\uploadexceldatapage.baml" LogicalName="views/subpages/xt2/uploadexceldatapage.baml" />
+    <EmbeddedResource Include="app.baml" LogicalName="app.baml" />
+    <EmbeddedResource Include="views\windows\excelfilterwindow.baml" LogicalName="views/windows/excelfilterwindow.baml" />
+    <EmbeddedResource Include="views\windows\columnselectionwindow.baml" LogicalName="views/windows/columnselectionwindow.baml" />
+    <EmbeddedResource Include="views\pages\dataassetcenterpage.baml" LogicalName="views/pages/dataassetcenterpage.baml" />
+    <EmbeddedResource Include="views\subpages\common\commonmatchmajor.baml" LogicalName="views/subpages/common/commonmatchmajor.baml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="SqlSugar">
+      <HintPath>..\..\IODataPlatform\bin\Release\net8.0-windows\SqlSugar.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Hosting.Abstractions">
+      <HintPath>..\..\IODataPlatform\bin\Release\net8.0-windows\Microsoft.Extensions.Hosting.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Wpf.Ui">
+      <HintPath>..\..\IODataPlatform\bin\Release\net8.0-windows\Wpf.Ui.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Configuration.Abstractions">
+      <HintPath>..\..\IODataPlatform\bin\Release\net8.0-windows\Microsoft.Extensions.Configuration.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions">
+      <HintPath>..\..\IODataPlatform\bin\Release\net8.0-windows\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="LYSoft.Libs.Core">
+      <HintPath>..\..\IODataPlatform\bin\Release\net8.0-windows\LYSoft.Libs.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="LYSoft.Libs.Excel">
+      <HintPath>..\..\IODataPlatform\bin\Release\net8.0-windows\LYSoft.Libs.Excel.dll</HintPath>
+    </Reference>
+    <Reference Include="CommunityToolkit.Mvvm">
+      <HintPath>..\..\IODataPlatform\bin\Release\net8.0-windows\CommunityToolkit.Mvvm.dll</HintPath>
+    </Reference>
+    <Reference Include="Markdig">
+      <HintPath>..\..\IODataPlatform\bin\Release\net8.0-windows\Markdig.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.WebView2.Wpf">
+      <HintPath>..\..\IODataPlatform\bin\Release\net8.0-windows\Microsoft.Web.WebView2.Wpf.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.WebView2.Core">
+      <HintPath>..\..\IODataPlatform\bin\Release\net8.0-windows\Microsoft.Web.WebView2.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Aspose.Cells">
+      <HintPath>..\..\IODataPlatform\bin\Release\net8.0-windows\Aspose.Cells.dll</HintPath>
+    </Reference>
+    <Reference Include="LYSoft.Libs.Word">
+      <HintPath>..\..\IODataPlatform\bin\Release\net8.0-windows\LYSoft.Libs.Word.dll</HintPath>
+    </Reference>
+    <Reference Include="Aspose.Words">
+      <HintPath>..\..\IODataPlatform\bin\Release\net8.0-windows\Aspose.Words.dll</HintPath>
+    </Reference>
+    <Reference Include="LYSoft.Libs.Wpf.WpfUI">
+      <HintPath>..\..\IODataPlatform\bin\Release\net8.0-windows\LYSoft.Libs.Wpf.WpfUI.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Options">
+      <HintPath>..\..\IODataPlatform\bin\Release\net8.0-windows\Microsoft.Extensions.Options.dll</HintPath>
+    </Reference>
+    <Reference Include="NCalc">
+      <HintPath>..\..\IODataPlatform\bin\Release\net8.0-windows\NCalc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive">
+      <HintPath>..\..\IODataPlatform\bin\Release\net8.0-windows\System.Reactive.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Logging.Abstractions">
+      <HintPath>..\..\IODataPlatform\bin\Release\net8.0-windows\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Hosting">
+      <HintPath>..\..\IODataPlatform\bin\Release\net8.0-windows\Microsoft.Extensions.Hosting.dll</HintPath>
+    </Reference>
+    <Reference Include="WpfAnimatedGif">
+      <HintPath>..\..\IODataPlatform\bin\Release\net8.0-windows\WpfAnimatedGif.dll</HintPath>
+    </Reference>
+    <Reference Include="LYSoft.Libs.Wpf">
+      <HintPath>..\..\IODataPlatform\bin\Release\net8.0-windows\LYSoft.Libs.Wpf.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Configuration.Binder">
+      <HintPath>..\..\IODataPlatform\bin\Release\net8.0-windows\Microsoft.Extensions.Configuration.Binder.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Options.ConfigurationExtensions">
+      <HintPath>..\..\IODataPlatform\bin\Release\net8.0-windows\Microsoft.Extensions.Options.ConfigurationExtensions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Logging">
+      <HintPath>..\..\IODataPlatform\bin\Release\net8.0-windows\Microsoft.Extensions.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="LYSoft.Libs.Pdf">
+      <HintPath>..\..\IODataPlatform\bin\Release\net8.0-windows\LYSoft.Libs.Pdf.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Configuration.FileExtensions">
+      <HintPath>..\..\IODataPlatform\bin\Release\net8.0-windows\Microsoft.Extensions.Configuration.FileExtensions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CodeAnalysis.CSharp.Scripting">
+      <HintPath>..\..\IODataPlatform\bin\Release\net8.0-windows\Microsoft.CodeAnalysis.CSharp.Scripting.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CodeAnalysis.Scripting">
+      <HintPath>..\..\IODataPlatform\bin\Release\net8.0-windows\Microsoft.CodeAnalysis.Scripting.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Logging.Console">
+      <HintPath>..\..\IODataPlatform\bin\Release\net8.0-windows\Microsoft.Extensions.Logging.Console.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Logging.Debug">
+      <HintPath>..\..\IODataPlatform\bin\Release\net8.0-windows\Microsoft.Extensions.Logging.Debug.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,213 @@
+﻿<Page x:Class="IODataPlatform.Views.Pages.DataAssetCenterPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:ly="http://lysoft/wpf"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:local="clr-namespace:IODataPlatform.Views.Pages"
+      xmlns:sys="clr-namespace:System;assembly=mscorlib"
+      xmlns:cus="clr-namespace:LYSoft.Libs.Wpf.WpfUI.Custom;assembly=LYSoft.Libs.Wpf.WpfUI"
+      d:DataContext="{d:DesignInstance local:DataAssetCenterPage, IsDesignTimeCreatable=False}"
+      Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+      ScrollViewer.CanContentScroll="False"
+      mc:Ignorable="d">
+
+    <Page.Resources>
+        <ly:BooleanToVisiblityConverter x:Key="BooleanToVisiblityConverter" />
+        <ly:NullToBooleanConverter IsInverse="True"
+                                   x:Key="NullToBooleanConverter" />
+        <local:CategoryToVisibilityConverter x:Key="CategoryToVisibilityConverter" />
+
+        <Style TargetType="ui:MenuItem"
+               BasedOn="{StaticResource UiMenuItem}"
+               x:Key="EditConfigurationTableMenuItem">
+            <Setter Property="Command"
+                    Value="{Binding ViewModel.EditConfigurationTableCommand}" />
+            <Setter Property="CommandParameter"
+                    Value="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Header}" />
+        </Style>
+        <Style TargetType="ui:MenuItem"
+               BasedOn="{StaticResource UiMenuItem}"
+               x:Key="ExportMenuItem">
+            <Setter Property="Command"
+                    Value="{Binding ViewModel.ExportCommand}" />
+            <Setter Property="CommandParameter"
+                    Value="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Header}" />
+        </Style>
+    </Page.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0"
+                    Orientation="Horizontal">
+
+            <Menu>
+                <ui:MenuItem Header="项目"
+                             Icon="{ui:SymbolIcon MultiSelectRtl24}">
+                    <StackPanel>
+                        <StackPanel Margin="3"
+                                    Orientation="Horizontal">
+                            <TextBlock Text="项目"
+                                       VerticalAlignment="Center"
+                                       Width="50" />
+                            <ComboBox ItemsSource="{Binding ViewModel.Projects}"
+                                      SelectedItem="{Binding ViewModel.Project}"
+                                      Width="150">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Name}" />
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                        </StackPanel>
+                        <StackPanel Margin="3"
+                                    Orientation="Horizontal">
+                            <TextBlock Text="专业"
+                                       VerticalAlignment="Center"
+                                       Width="50" />
+                            <ComboBox ItemsSource="{Binding ViewModel.Majors}"
+                                      SelectedItem="{Binding ViewModel.Major1}"
+                                      Width="150">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding CableSystem}" />
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                        </StackPanel>
+                        <StackPanel Margin="3"
+                                    Orientation="Horizontal">
+                            <TextBlock Text="子项"
+                                       VerticalAlignment="Center"
+                                       Width="50" />
+                            <ComboBox ItemsSource="{Binding ViewModel.SubProjects1}"
+                                      SelectedItem="{Binding ViewModel.SubProject1}"
+                                      Width="150">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Name}" />
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                        </StackPanel>
+                        <StackPanel Margin="3"
+                                    Orientation="Horizontal"
+                                    Visibility="{Binding ViewModel.Category, Converter={StaticResource CategoryToVisibilityConverter}}">
+                            <TextBlock Text="专业2"
+                                       VerticalAlignment="Center"
+                                       Width="50" />
+                            <ComboBox ItemsSource="{Binding ViewModel.Majors}"
+                                      SelectedItem="{Binding ViewModel.Major2}"
+                                      Width="150">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding CableSystem}" />
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                        </StackPanel>
+                        <StackPanel Margin="3"
+                                    Orientation="Horizontal"
+                                    Visibility="{Binding ViewModel.Category, Converter={StaticResource CategoryToVisibilityConverter}}">
+                            <TextBlock Text="子项2"
+                                       VerticalAlignment="Center"
+                                       Width="50" />
+                            <ComboBox ItemsSource="{Binding ViewModel.SubProjects2}"
+                                      SelectedItem="{Binding ViewModel.SubProject2}"
+                                      Width="150">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Name}" />
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                        </StackPanel>
+                        <StackPanel Margin="3"
+                                    Orientation="Horizontal">
+                            <TextBlock Text="版本"
+                                       VerticalAlignment="Center"
+                                       Width="50" />
+                            <ComboBox ItemsSource="{Binding ViewModel.PublishVersions}"
+                                      SelectedItem="{Binding ViewModel.PublishVersion}"
+                                      Width="150">
+                            </ComboBox>
+                        </StackPanel>
+
+                    </StackPanel>
+                    <Separator />
+                    <ui:MenuItem Header="全部刷新"
+                                 Icon="{ui:SymbolIcon ArrowSync12}"
+                                 Command="{Binding ViewModel.RefreshAllCommand}" />
+                </ui:MenuItem>
+
+                <ui:MenuItem Header="配置表"
+                             Icon="{ui:SymbolIcon TableSettings28}">
+                    <ui:MenuItem Header="控制系统IO数据配置"
+                                 Style="{StaticResource EditConfigurationTableMenuItem}" />
+                </ui:MenuItem>
+
+            </Menu>
+
+            <Menu IsEnabled="{Binding ViewModel.AllData, Converter={StaticResource NullToBooleanConverter}}">
+                <ui:MenuItem Header="导出"
+                             Icon="{ui:SymbolIcon ArrowExportLtr24}"
+                             Command="{Binding ViewModel.ExportCommand}" />
+            </Menu>
+
+            <ui:TextBlock Margin="10,0,0,0"
+                          Text="下载url： "
+                          VerticalAlignment="Center" />
+
+            <ui:HyperlinkButton Command="{Binding RelativeSource={RelativeSource AncestorType=local:DataAssetCenterPage}, Path=ViewModel.CopyToClipboardCommand}"
+                                CommandParameter="{Binding ViewModel.DownloadUrl}">
+                <TextBlock Text="{Binding ViewModel.DownloadUrl}"></TextBlock>
+            </ui:HyperlinkButton>
+
+        </StackPanel>
+        <StackPanel Grid.Row="1"
+                    Background="WhiteSmoke"
+                    Margin="2">
+            <Border  Padding="10"
+                     BorderBrush="White">
+                <TabControl  SelectedValuePath="Header"
+                             SelectedValue="{Binding ViewModel.Category, Mode=TwoWay}">
+                    <TabItem Header="IO">
+                        <cus:CustomDataGrid        x:Name="grid"
+                                            ItemsSource="{Binding ViewModel.AllData}"
+                                            AutoGenerateColumns="true"
+                                            CanUserAddRows="False"
+                                            Style="{StaticResource DataGridStyle}">
+                        </cus:CustomDataGrid>
+                    </TabItem>
+                    <TabItem Header="端接">
+                        <cus:CustomDataGrid x:Name="Data"
+                                     Margin="0,0,0,10"
+                                     Grid.Row="2"
+                                     ItemsSource="{Binding ViewModel.AllData}"
+                                     AutoGenerateColumns="True"
+                                     CanUserAddRows="False"
+                                     Style="{StaticResource DataGridStyle}">
+                        </cus:CustomDataGrid>
+                    </TabItem>
+                    <TabItem Header="电缆">
+                        <cus:CustomDataGrid Margin="0,0,0,10"
+                                            Grid.Row="1"
+                                            ItemsSource="{Binding ViewModel.AllData}"
+                                            AutoGenerateColumns="True"
+                                            CanUserAddRows="False"
+                                            Style="{StaticResource DataGridStyle}">
+                        </cus:CustomDataGrid>
+                    </TabItem>
+                </TabControl>
+            </Border>
+
+        </StackPanel>
+
+    </Grid>
+</Page>

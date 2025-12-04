@@ -1,0 +1,107 @@
+﻿<Page 
+    x:Class="IODataPlatform.Views.Pages.PaperPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:ly="http://lysoft/wpf"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:local="clr-namespace:IODataPlatform.Views.Pages"
+    d:DataContext="{d:DesignInstance local:PaperPage, IsDesignTimeCreatable=False}"
+    Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+    ScrollViewer.CanContentScroll="False"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <ly:NullToBooleanConverter IsInverse="True" x:Key="NullToBooleanConverter"/>
+    </Page.Resources>
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Orientation="Horizontal">
+
+            <Menu>
+                <ui:MenuItem Header="项目">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="项目" VerticalAlignment="Center" Width="50"/>
+                        <ComboBox ItemsSource="{Binding ViewModel.Projects}" SelectedItem="{Binding ViewModel.Project}" Width="150">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Name}"/>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                    </StackPanel>
+                    <ui:MenuItem Header="全部刷新" Icon="{ui:SymbolIcon ArrowSync12}" Command="{Binding ViewModel.RefreshAllCommand}"/>
+                </ui:MenuItem>
+                <Separator/>
+            </Menu>
+
+            <Menu IsEnabled="{Binding ViewModel.Project, Converter={StaticResource NullToBooleanConverter}}">
+                <ui:MenuItem Header="编辑盘箱柜" Command="{Binding ViewModel.EditDeviceTableCommand}"/>
+                <ui:MenuItem Header="上传图纸" Command="{Binding ViewModel.UploadPaperCommand}"/>
+            </Menu>
+        </StackPanel>
+
+        <WrapPanel Orientation="Horizontal" Grid.Row="1" IsEnabled="{Binding ViewModel.AllData, Converter={StaticResource NullToBooleanConverter}}" Margin="0,0,0,10">
+
+            <ui:TextBlock Text="发布日期" VerticalAlignment="Center" Margin="10,0"/>
+            <DatePicker SelectedDate="{Binding ViewModel.DateFrom}"/>
+            <ui:TextBlock Text="-" VerticalAlignment="Center" Margin="10,0"/>
+            <DatePicker SelectedDate="{Binding ViewModel.DateTo}"/>
+
+            <ui:TextBlock Text="盘箱柜类别" VerticalAlignment="Center" Margin="10,0"/>
+            <ComboBox ItemsSource="{Binding ViewModel.DeviceTypes}" SelectedItem="{Binding ViewModel.DeviceType}"/>
+
+            <ui:TextBlock Text="LOT" VerticalAlignment="Center" Margin="10,0"/>
+            <ui:TextBox Text="{Binding ViewModel.Lot}" MinWidth="80"/>
+
+            <ui:TextBlock Text="Batch" VerticalAlignment="Center" Margin="10,0"/>
+            <ui:TextBox Text="{Binding ViewModel.Batch}" MinWidth="80"/>
+
+            <ui:TextBlock Text="版本号" VerticalAlignment="Center" Margin="10,0"/>
+            <ui:TextBox Text="{Binding ViewModel.Version}" MinWidth="80"/>
+
+            <ui:TextBlock Text="房间号" VerticalAlignment="Center" Margin="10,0"/>
+            <ui:TextBox Text="{Binding ViewModel.Room}" MinWidth="120"/>
+
+            <ui:Button Margin="10,0,0,0" Appearance="Primary" Icon="{ui:SymbolIcon Search24}" Command="{Binding ViewModel.SearchCommand}"/>
+        </WrapPanel>
+
+        <ui:DataGrid Margin="0,0,0,10" Grid.Row="2" ItemsSource="{Binding ViewModel.DisplayData}" Style="{StaticResource DataGridStyle}">
+            <ui:DataGrid.Columns>
+                <DataGridTemplateColumn Width="260" Header="操作">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <ui:Button Content="Zip" CommandParameter="{Binding}"
+                                           Command="{Binding RelativeSource={RelativeSource AncestorType=local:PaperPage}, Path=ViewModel.BrowserZipCommand}"/>
+                                <ui:Button Margin="1,0,0,0" Content="PDF" CommandParameter="{Binding}"
+                                           Command="{Binding RelativeSource={RelativeSource AncestorType=local:PaperPage}, Path=ViewModel.BrowserPdfCommand}"/>
+                                <ui:Button Margin="1,0,0,0" Content="上传依据" CommandParameter="{Binding}"
+                                           Command="{Binding RelativeSource={RelativeSource AncestorType=local:PaperPage}, Path=ViewModel.UploadDepCommand}"/>
+                                <ui:Button Margin="1,0,0,0" Content="查看依据" CommandParameter="{Binding}"
+                                           Command="{Binding RelativeSource={RelativeSource AncestorType=local:PaperPage}, Path=ViewModel.ViewDepCommand}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Width="100" Header="发布日期" Binding="{Binding 图纸.发布日期, StringFormat='yyyy/MM/dd'}" ElementStyle="{StaticResource DataGridTextBlockCellStyle_Center}"/>
+                <DataGridTextColumn Width="*" Header="内部编码" Binding="{Binding 盘箱柜.内部编码}" ElementStyle="{StaticResource DataGridTextBlockCellStyle_Center}"/>
+                <DataGridTextColumn Width="250" Header="外部编码" Binding="{Binding 盘箱柜.外部编码}" ElementStyle="{StaticResource DataGridTextBlockCellStyle_Center}"/>
+                <DataGridTextColumn Width="100" Header="盘箱柜" Binding="{Binding 盘箱柜.名称}" ElementStyle="{StaticResource DataGridTextBlockCellStyle_Center}"/>
+                <DataGridTextColumn Width="50" Header="类别" Binding="{Binding 盘箱柜.类别}" ElementStyle="{StaticResource DataGridTextBlockCellStyle_Center}"/>
+                <DataGridTextColumn Width="50" Header="LOT" Binding="{Binding 盘箱柜.LOT}" ElementStyle="{StaticResource DataGridTextBlockCellStyle_Center}"/>
+                <DataGridTextColumn Width="50" Header="Batch" Binding="{Binding 盘箱柜.Batch}" ElementStyle="{StaticResource DataGridTextBlockCellStyle_Center}"/>
+                <DataGridTextColumn Width="50" Header="版本号" Binding="{Binding 图纸.版本}" ElementStyle="{StaticResource DataGridTextBlockCellStyle_Center}"/>
+                <DataGridTextColumn Width="50" Header="房间号" Binding="{Binding 盘箱柜.房间号}" ElementStyle="{StaticResource DataGridTextBlockCellStyle_Center}"/>
+            </ui:DataGrid.Columns>
+        </ui:DataGrid>
+        
+    </Grid>
+</Page>

@@ -1,0 +1,33 @@
+{
+  "dependentFileProviders": {
+    "add": {
+      "addedExtension": {},
+      "pathSegment": {
+        "add": {
+          ".*": [
+            ".config",
+            ".cs",
+            ".vb",
+            ".json"
+          ]
+        }
+      },
+      "extensionToExtension": {
+        "add": {
+          ".vm.cs": [
+            ".xaml"
+          ],
+          ".ext.cs": [
+            ".xaml"
+          ],
+          ".designer.cs": [
+            ".resx"
+          ],
+          ".cs.d.ts": [
+            ".cs"
+          ]
+        }
+      }
+    }
+  }
+}

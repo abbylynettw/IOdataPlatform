@@ -1,0 +1,84 @@
+<ui:FluentWindow x:Class="IODataPlatform.Views.Windows.ColumnSelectionWindow"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             mc:Ignorable="d"
+             Title="选择显示列"
+             Width="800"
+             Height="600"
+             WindowStartupLocation="CenterOwner"
+             ExtendsContentIntoTitleBar="True"
+             WindowBackdropType="Mica">
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- 搜索框 -->
+        <ui:TextBox Grid.Row="0"
+                    x:Name="ColumnSearchBox"
+                    PlaceholderText="搜索列名..."
+                    Icon="{ui:SymbolIcon Search24}"
+                    Margin="0,0,0,15"
+                    TextChanged="ColumnSearchBox_TextChanged"/>
+
+        <!-- 操作按钮行 -->
+        <StackPanel Grid.Row="1" 
+                    Orientation="Horizontal" 
+                    Margin="0,0,0,15"
+                    HorizontalAlignment="Left">
+            <ui:Button x:Name="ToggleAllButton"
+                       Content="全选"
+                       Icon="{ui:SymbolIcon CheckboxChecked24}"
+                       Appearance="Secondary"
+                       Margin="0,0,10,0"
+                       Click="ToggleAllColumns_Click"/>
+            <ui:Button Content="反选"
+                       Icon="{ui:SymbolIcon ArrowSwap24}"
+                       Appearance="Secondary"
+                       Margin="0,0,10,0"
+                       Click="InverseSelectColumns_Click"/>
+            <ui:Button Content="恢复默认"
+                       Icon="{ui:SymbolIcon ArrowUndo24}"
+                       Appearance="Secondary"
+                       Click="RestoreDefaultColumns_Click"/>
+        </StackPanel>
+
+        <!-- 列选择区域 -->
+        <Border Grid.Row="2" 
+                BorderThickness="1" 
+                BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
+                CornerRadius="4"
+                Background="{DynamicResource CardBackgroundFillColorDefaultBrush}">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <WrapPanel x:Name="ColumnsVisibilityPanel" 
+                           Margin="10"
+                           Orientation="Horizontal"/>
+            </ScrollViewer>
+        </Border>
+
+        <!-- 底部按钮 -->
+        <StackPanel Grid.Row="3" 
+                    Orientation="Horizontal" 
+                    HorizontalAlignment="Right" 
+                    Margin="0,15,0,0">
+            <ui:Button Content="确定"
+                       Icon="{ui:SymbolIcon Checkmark24}"
+                       Appearance="Primary"
+                       Margin="0,0,10,0"
+                       MinWidth="100"
+                       Click="ConfirmButton_Click"/>
+            <ui:Button Content="取消"
+                       Icon="{ui:SymbolIcon Dismiss24}"
+                       Appearance="Secondary"
+                       MinWidth="100"
+                       Click="CancelButton_Click"/>
+        </StackPanel>
+    </Grid>
+</ui:FluentWindow>

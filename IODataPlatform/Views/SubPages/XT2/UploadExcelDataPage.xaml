@@ -1,0 +1,43 @@
+<Page x:Class="IODataPlatform.Views.SubPages.XT2.UploadExcelDataPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+    xmlns:local="clr-namespace:IODataPlatform.Views.SubPages.XT2"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    d:DataContext="{d:DesignInstance Type=local:UploadExcelDataViewModel, IsDesignTimeCreatable=True}"
+    Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+    ui:NavigationView.HeaderContent="导入Excel数据"
+    ScrollViewer.CanContentScroll="False"
+    mc:Ignorable="d">
+
+    <Grid VerticalAlignment="Stretch">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Grid.ColumnSpan="100" Orientation="Horizontal" Margin="0,0,0,10">
+            <ui:Button Content="导入输出输出文件" Appearance="Primary" Command="{Binding ViewModel.ImportDataCommand}" CommandParameter="io"/>
+            <ui:TextBlock Margin="10,0,0,0" Text="子网" VerticalAlignment="Center"/>
+            <ui:TextBox Margin="10,0,0,0" Text="{Binding ViewModel.SubNet}" Width="120"/>
+            <ui:Button Margin="10,0,0,0" Content="确认导入" Appearance="Success" Command="{Binding ViewModel.ConfirmCommand}"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal">
+            <ui:TextBlock Text="导入的IO数据：共"/>
+            <ui:TextBlock Margin="5,0" Text="{Binding ViewModel.IoDataCount}"/>
+            <ui:TextBlock Text="条"/>
+        </StackPanel>
+        <ui:DataGrid Grid.Row="2" Grid.ColumnSpan="2" ItemsSource="{Binding ViewModel.IoData}" AutoGenerateColumns="True" Style="{StaticResource DataGridStyle}"/>
+
+    </Grid>
+
+</Page>

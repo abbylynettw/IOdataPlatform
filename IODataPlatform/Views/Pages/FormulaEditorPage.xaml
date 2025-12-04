@@ -1,0 +1,135 @@
+﻿<Page 
+    x:Class="IODataPlatform.Views.Pages.FormulaEditorPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:ly="http://lysoft/wpf"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:local="clr-namespace:IODataPlatform.Views.Pages"
+    d:DataContext="{d:DesignInstance local:FormulaEditorPage, IsDesignTimeCreatable=False}"
+    Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+    ScrollViewer.CanContentScroll="False"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <ly:NullToBooleanConverter IsInverse="True" x:Key="NullToBooleanConverter"/>
+    </Page.Resources>
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="500"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Orientation="Horizontal"
+                    Margin="0,0,0,10">
+            <ui:TextBlock Text="数据类型："
+                          VerticalAlignment="Center" />
+            <ComboBox ItemsSource="{Binding ViewModel.TargetTypes}"
+                      SelectedItem="{Binding ViewModel.TargetType}"
+                      MinWidth="150">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <ui:TextBlock Text="{Binding Name}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+            <ui:TextBlock Margin="20,0,0,0"
+                          Text="目标字段："
+                          VerticalAlignment="Center" />
+            <ComboBox ItemsSource="{Binding ViewModel.Fields}"
+                      SelectedItem="{Binding ViewModel.Field}"
+                      MinWidth="150">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <ui:TextBlock Text="{Binding OwnDisplayName}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+
+        </StackPanel>
+        <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" IsEnabled="{Binding ViewModel.Formula, Converter={StaticResource NullToBooleanConverter}}">
+            <ui:TextBlock Text="顺序表" VerticalAlignment="Center"/>
+            <ui:Button Margin="10,0,0,0" Icon="{ui:SymbolIcon Add24}" Appearance="Primary" Command="{Binding ViewModel.AddIndexCommand}"/>
+        </StackPanel>
+
+        <ui:DataGrid Margin="0,10,0,0" Grid.Row="2" Grid.Column="0" ItemsSource="{Binding ViewModel.Indecis}" Style="{StaticResource DataGridStyle}">
+            <ui:DataGrid.Columns>
+                <DataGridTextColumn Width="50" Header="顺序" Binding="{Binding Index}" ElementStyle="{StaticResource DataGridTextBlockCellStyle_Center}"/>
+                <DataGridTextColumn Width="*" Header="返回值" Binding="{Binding ReturnValue}" ElementStyle="{StaticResource DataGridTextBlockCellStyle_Center}"/>
+                <DataGridTemplateColumn Width="261" Header="操作">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <ui:Button Icon="{ui:SymbolIcon Edit24}"
+                                           
+                                           CommandParameter="{Binding}" Margin="2 0"
+                                           Command="{Binding RelativeSource={RelativeSource AncestorType=local:FormulaEditorPage}, Path=ViewModel.EditIndexCommand}"/>
+                                <ui:Button Icon="{ui:SymbolIcon Eye24}"
+                                           CommandParameter="{Binding}"
+                                           Margin="2 0"
+                                           Command="{Binding RelativeSource={RelativeSource AncestorType=local:FormulaEditorPage}, Path=ViewModel.ViewIndexCommand}"/>
+                                <ui:Button Icon="{ui:SymbolIcon Delete24}"
+                                           CommandParameter="{Binding}"                                          
+                                           Margin="2 0"
+                                           Appearance="Danger"
+                                           Command="{Binding RelativeSource={RelativeSource AncestorType=local:FormulaEditorPage}, Path=ViewModel.DeleteIndexCommand}"/>
+                                <ui:Button Icon="{ui:SymbolIcon ArrowUp24}"
+                                           CommandParameter="{Binding}"
+                                           Margin="2 0"
+                                           
+                                           Command="{Binding RelativeSource={RelativeSource AncestorType=local:FormulaEditorPage}, Path=ViewModel.MoveUpIndexCommand}"/>
+                                <ui:Button Icon="{ui:SymbolIcon ArrowDown24}"
+                                           CommandParameter="{Binding}"
+                                           Margin="1 0"
+                                          
+                                           Command="{Binding RelativeSource={RelativeSource AncestorType=local:FormulaEditorPage}, Path=ViewModel.MoveDownIndexCommand}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </ui:DataGrid.Columns>
+        </ui:DataGrid>
+
+        <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" IsEnabled="{Binding ViewModel.Formula, Converter={StaticResource NullToBooleanConverter}}">
+            <ui:TextBlock Text="条件表顺序：" VerticalAlignment="Center"/>
+            <ui:TextBlock Text="{Binding ViewModel.Index.Index}" VerticalAlignment="Center"/>
+            <ui:Button Margin="10,0,0,0" Icon="{ui:SymbolIcon Add24}" Appearance="Primary" Command="{Binding ViewModel.AddConditionCommand}"/>
+        </StackPanel>
+
+        <ui:DataGrid Margin="0,10,0,0" Grid.Row="2" Grid.Column="1" ItemsSource="{Binding ViewModel.Conditions}" Style="{StaticResource DataGridStyle}">
+            <ui:DataGrid.Columns>
+                <DataGridTextColumn Width="50" Header="顺序" Binding="{Binding Index}" ElementStyle="{StaticResource DataGridTextBlockCellStyle_Center}" />
+                <DataGridTextColumn Width="80" Header="条件运算符" Binding="{Binding ConditionOperator}" ElementStyle="{StaticResource DataGridTextBlockCellStyle_Center}" />
+                <DataGridTextColumn Width="*" Header="字段名" Binding="{Binding FieldName}" ElementStyle="{StaticResource DataGridTextBlockCellStyle_Center}"/>
+                <DataGridTextColumn Width="80" Header="字段运算符" Binding="{Binding FieldOperator}" ElementStyle="{StaticResource DataGridTextBlockCellStyle_Center}"/>
+                <DataGridTextColumn Width="80" Header="字段值" Binding="{Binding FieldValue}" ElementStyle="{StaticResource DataGridTextBlockCellStyle_Center}"/>
+               
+                <DataGridTemplateColumn Width="209" Header="操作">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <ui:Button Icon="{ui:SymbolIcon Edit24}" CommandParameter="{Binding}"
+                                           Command="{Binding RelativeSource={RelativeSource AncestorType=local:FormulaEditorPage}, Path=ViewModel.EditConditionCommand}"/>
+                                <ui:Button Icon="{ui:SymbolIcon Delete24}" CommandParameter="{Binding}" Appearance="Danger"
+                                           Command="{Binding RelativeSource={RelativeSource AncestorType=local:FormulaEditorPage}, Path=ViewModel.DeleteConditionCommand}"/>
+                                <ui:Button Icon="{ui:SymbolIcon ArrowUp24}" CommandParameter="{Binding}"
+                                           Command="{Binding RelativeSource={RelativeSource AncestorType=local:FormulaEditorPage}, Path=ViewModel.MoveUpConditionCommand}"/>
+                                <ui:Button Icon="{ui:SymbolIcon ArrowDown24}" CommandParameter="{Binding}"
+                                           Command="{Binding RelativeSource={RelativeSource AncestorType=local:FormulaEditorPage}, Path=ViewModel.MoveDownConditionCommand}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </ui:DataGrid.Columns>
+        </ui:DataGrid>
+        
+    </Grid>
+</Page>

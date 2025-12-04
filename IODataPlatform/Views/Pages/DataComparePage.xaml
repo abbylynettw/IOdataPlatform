@@ -1,0 +1,461 @@
+<Page 
+    x:Class="IODataPlatform.Views.Pages.DataComparePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+    xmlns:local="clr-namespace:IODataPlatform.Views.Pages"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    xmlns:converters="clr-namespace:IODataPlatform.Converters"
+    AllowDrop="True"
+    Drop="Page_Drop"
+    ScrollViewer.CanContentScroll="False"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <local:BoolToAppearanceConverter x:Key="BoolToAppearanceConverter" />
+        <local:InverseBoolToAppearanceConverter x:Key="InverseBoolToAppearanceConverter" />
+        <local:BoolToKeyColumnTextConverter x:Key="BoolToKeyColumnTextConverter" />
+    </Page.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="90" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="50" />
+        </Grid.RowDefinitions>
+
+        <!-- 顶部控制栏：文件选择 + 所有按钮 -->
+        <ui:Card Grid.Row="0" Margin="0,0,0,0" Padding="5">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <!-- 第一行：文件选择 -->
+                <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- 旧文件区域 -->
+                    <StackPanel Grid.Column="0" Margin="0,0,5,0">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="旧版本：" VerticalAlignment="Center" Margin="0,0,5,0" FontWeight="Bold" />
+                            <ui:TextBox Grid.Column="1" 
+                                        Text="{Binding ViewModel.FileName1}" 
+                                        IsReadOnly="True" 
+                                        PlaceholderText="拖拽或点击选择Excel文件1"
+                                        ToolTip="{Binding ViewModel.FilePath1}"
+                                        Margin="0,0,5,0" />
+                            <ComboBox Grid.Column="2" 
+                                      ItemsSource="{Binding ViewModel.SheetNames1}"
+                                      SelectedItem="{Binding ViewModel.SelectedSheet1}"
+                                      MinWidth="120"
+                                      Margin="0,0,5,0" />
+                            <ui:Button Grid.Column="3" 
+                                       Content="浏览" 
+                                       Command="{Binding ViewModel.PickFileCommand}" 
+                                       CommandParameter="1"
+                                       Width="60" />
+                        </Grid>
+                    </StackPanel>
+
+                    <!-- 互换按钮 -->
+                    <ui:Button Grid.Column="1" 
+                               Content="⇄" 
+                               FontSize="18"
+                               ToolTip="互换新旧文件"
+                               Click="SwapFiles"
+                               Width="35"
+                               Height="35"
+                               VerticalAlignment="Center"
+                               Margin="5,0" />
+
+                    <!-- 新文件区域 -->
+                    <StackPanel Grid.Column="2" Margin="5,0,0,0">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="新版本：" VerticalAlignment="Center" Margin="0,0,5,0" FontWeight="Bold" />
+                            <ui:TextBox Grid.Column="1" 
+                                        Text="{Binding ViewModel.FileName2}" 
+                                        IsReadOnly="True" 
+                                        PlaceholderText="拖拽或点击选择Excel文件2"
+                                        ToolTip="{Binding ViewModel.FilePath2}"
+                                        Margin="0,0,5,0" />
+                            <ComboBox Grid.Column="2" 
+                                      ItemsSource="{Binding ViewModel.SheetNames2}"
+                                      SelectedItem="{Binding ViewModel.SelectedSheet2}"
+                                      MinWidth="120"
+                                      Margin="0,0,5,0" />
+                            <ui:Button Grid.Column="3" 
+                                       Content="浏览" 
+                                       Command="{Binding ViewModel.PickFileCommand}" 
+                                       CommandParameter="2"
+                                       Width="60" />
+                        </Grid>
+                    </StackPanel>
+                </Grid>
+
+                <!-- 第二行：所有控制按钮 -->
+                <WrapPanel Grid.Row="1" Orientation="Horizontal" Margin="0,10,0,0">
+                    <!-- 主键字段 -->
+                    <TextBlock Text="主键：" VerticalAlignment="Center" Margin="0,0,5,0" />
+                    <ui:Button x:Name="KeyFieldsButton"
+                               Content="{Binding ViewModel.KeyFieldsDisplay}"
+                               Icon="Key24"
+                               MinWidth="200"
+                               Margin="0,0,5,0"
+                               Click="KeyFieldsButton_Click"
+                               ToolTip="点击选择主键字段" />
+                    <ui:Button Click="ToggleKeyColumns"
+                               Appearance="{Binding ViewModel.ShowKeyColumns, Converter={StaticResource BoolToAppearanceConverter}}"
+                               ToolTip="显示/隐藏主键列"
+                               Margin="0,0,15,0"
+                               Padding="6,3"
+                               FontSize="14">
+                        <TextBlock Text="{Binding ViewModel.ShowKeyColumns, Converter={StaticResource BoolToKeyColumnTextConverter}}" />
+                    </ui:Button>
+                    
+                    <!-- 基本操作 -->
+                    <ui:Button Content="开始对比"
+                               Click="Compare"
+                               Appearance="Primary"
+                               Margin="0,0,5,0" />
+                    <ui:Button Content="清空"
+                               Command="{Binding ViewModel.ClearResultsCommand}"
+                               Margin="0,0,5,0" />
+                    
+                    <!-- 导出按钮（支持拖拽） -->
+                    <ui:Button MouseDown="ExportButton_MouseDown"
+                               IsEnabled="{Binding ViewModel.HasComparisonResults}"
+                               Margin="0,0,15,0"
+                               Appearance="Secondary"
+                               ToolTip="点击导出到桌面并打开，或拖拽到目标文件夹"
+                               Padding="6,3"
+                               FontSize="16">
+                        <ui:SymbolIcon Symbol="SaveCopy20" />
+                    </ui:Button>
+
+                    <!-- 筛选按钮 -->
+                    <ui:Button Click="ToggleAdded"
+                               Appearance="{Binding ViewModel.ShowAdded, Converter={StaticResource BoolToAppearanceConverter}}"
+                               ToolTip="显示/隐藏新增记录"
+                               Margin="0,0,3,0"
+                               Padding="6,3"
+                               FontSize="16">
+                        <ui:SymbolIcon Symbol="Add20" Foreground="#FF4CAF50" />
+                    </ui:Button>
+                    <ui:Button Click="ToggleModified"
+                               Appearance="{Binding ViewModel.ShowModified, Converter={StaticResource BoolToAppearanceConverter}}"
+                               ToolTip="显示/隐藏修改记录"
+                               Margin="0,0,3,0"
+                               Padding="6,3"
+                               FontSize="16">
+                        <ui:SymbolIcon Symbol="Edit20" Foreground="#FFFF9800" />
+                    </ui:Button>
+                    <ui:Button Click="ToggleDeleted"
+                               Appearance="{Binding ViewModel.ShowDeleted, Converter={StaticResource BoolToAppearanceConverter}}"
+                               ToolTip="显示/隐藏删除记录"
+                               Margin="0,0,3,0"
+                               Padding="6,3"
+                               FontSize="16">
+                        <ui:SymbolIcon Symbol="Delete20" Foreground="#FFF44336" />
+                    </ui:Button>
+                    <ui:Button Click="ToggleUnchanged"
+                               Appearance="{Binding ViewModel.ShowUnchanged, Converter={StaticResource BoolToAppearanceConverter}}"
+                               ToolTip="显示/隐藏未变更记录"
+                               Margin="0,0,15,0"
+                               Padding="6,3"
+                               FontSize="16">
+                        <ui:SymbolIcon Symbol="CheckmarkCircle20" Foreground="#FF9E9E9E" />
+                    </ui:Button>
+
+                    <!-- 列显示模式按钮 -->
+                    <ui:Button Click="ShowDiffColumnsOnly"
+                               Appearance="{Binding ViewModel.ShowDiffColumnsOnly, Converter={StaticResource BoolToAppearanceConverter}}"
+                               ToolTip="仅显示差异列"
+                               Margin="0,0,3,0"
+                               Padding="6,3"
+                               FontSize="16">
+                        <ui:SymbolIcon Symbol="Board24" />
+                    </ui:Button>
+                    <ui:Button Click="ShowAllColumns"
+                               Appearance="{Binding ViewModel.ShowDiffColumnsOnly, Converter={StaticResource InverseBoolToAppearanceConverter}}"
+                               ToolTip="显示所有列"
+                               Margin="0,0,15,0"
+                               Padding="6,3"
+                               FontSize="16">
+                        <ui:SymbolIcon Symbol="TableMultiple20" />
+                    </ui:Button>
+                    
+                    <!-- 视图模式按钮 -->
+                    <ui:Button Click="ShowSideBySideMode"
+                               Appearance="{Binding ViewModel.IsSideBySideMode, Converter={StaticResource BoolToAppearanceConverter}}"
+                               ToolTip="左右对比模式"
+                               Margin="0,0,3,0"
+                               Padding="6,3"
+                               FontSize="16">
+                        <ui:SymbolIcon Symbol="AlignDistributeLeft16" />
+                    </ui:Button>
+                    <ui:Button Click="ShowVerticalMode"
+                               Appearance="{Binding ViewModel.IsSideBySideMode, Converter={StaticResource InverseBoolToAppearanceConverter}}"
+                               ToolTip="上下对比模式"
+                               Margin="0,0,15,0"
+                               Padding="6,3"
+                               FontSize="16">
+                        <ui:SymbolIcon Symbol="AlignDistributeTop16" />
+                    </ui:Button>
+
+                    <!-- 差异定位按钮 -->
+                    <TextBlock Text="差异定位：" VerticalAlignment="Center" Margin="0,0,5,0" />
+                    <ui:Button Click="GotoPreviousDiff"
+                               IsEnabled="{Binding ViewModel.HasComparisonResults}"
+                               ToolTip="上一处差异 (Ctrl+Up)"
+                               Margin="0,0,3,0"
+                               Padding="8,3"
+                               FontSize="14">
+                        <StackPanel Orientation="Horizontal">
+                            <ui:SymbolIcon Symbol="ChevronUp20" Margin="0,0,3,0" />
+                            <TextBlock Text="上一处" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </ui:Button>
+                    <ui:Button Click="GotoNextDiff"
+                               IsEnabled="{Binding ViewModel.HasComparisonResults}"
+                               ToolTip="下一处差异 (Ctrl+Down)"
+                               Margin="0,0,5,0"
+                               Padding="8,3"
+                               FontSize="14">
+                        <StackPanel Orientation="Horizontal">
+                            <ui:SymbolIcon Symbol="ChevronDown20" Margin="0,0,3,0" />
+                            <TextBlock Text="下一处" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </ui:Button>
+                    <TextBlock x:Name="DiffPositionText"
+                               VerticalAlignment="Center"
+                               Margin="0,0,15,0"
+                               Foreground="#FF0078D4"
+                               FontWeight="Bold"
+                               Text="" />
+
+                    <!-- 统计信息 -->
+                    <TextBlock Text="总记录：" VerticalAlignment="Center" Margin="0,0,3,0" />
+                    <TextBlock Text="{Binding ViewModel.TotalCount}" VerticalAlignment="Center" FontWeight="Bold" Foreground="#FF0078D4" Margin="0,0,10,0" />
+                    <TextBlock Text="新增：" VerticalAlignment="Center" Margin="0,0,3,0" />
+                    <TextBlock Text="{Binding ViewModel.AddedCount}" VerticalAlignment="Center" FontWeight="Bold" Foreground="#FF4CAF50" Margin="0,0,10,0" />
+                    <TextBlock Text="修改：" VerticalAlignment="Center" Margin="0,0,3,0" />
+                    <TextBlock Text="{Binding ViewModel.ModifiedCount}" VerticalAlignment="Center" FontWeight="Bold" Foreground="#FFFF9800" Margin="0,0,10,0" />
+                    <TextBlock Text="删除：" VerticalAlignment="Center" Margin="0,0,3,0" />
+                    <TextBlock Text="{Binding ViewModel.DeletedCount}" VerticalAlignment="Center" FontWeight="Bold" Foreground="#FFF44336" Margin="0,0,5,0" />
+                </WrapPanel>
+            </Grid>
+        </ui:Card>
+
+        <!-- 中间区域：对比结果表格（每个表格自带滚动条） -->
+        <ui:Card Grid.Row="1" Margin="0,0,0,0" Padding="0">
+            <Grid>
+                <!-- 左右对比模式：两个DataGrid并排 -->
+                <Grid Visibility="{Binding ViewModel.IsSideBySideMode, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="5" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- 左侧：旧数据表格 -->
+                    <DockPanel Grid.Column="0">
+                        <Border DockPanel.Dock="Top" Background="#FFF5F5F5" Padding="5" BorderBrush="#FFDDDDDD" BorderThickness="0,0,0,1">
+                            <TextBlock Text="旧版本数据" FontWeight="Bold" FontSize="14" />
+                        </Border>
+                        <DataGrid x:Name="OldDataGrid"
+                                  AutoGenerateColumns="False"
+                                  IsReadOnly="True"
+                                  CanUserAddRows="False"
+                                  CanUserDeleteRows="False"
+                                  CanUserReorderColumns="False"
+                                  GridLinesVisibility="All"
+                                  HeadersVisibility="Column"
+                                  VirtualizingPanel.IsVirtualizing="True"
+                                  VirtualizingPanel.VirtualizationMode="Recycling"
+                                  EnableRowVirtualization="True"
+                                  FrozenColumnCount="2"
+                                  RowBackground="#FFF9F9F9"
+                                  AlternatingRowBackground="White">
+                            <DataGrid.RowStyle>
+                                <Style TargetType="DataGridRow">
+                                    <Setter Property="Background" Value="#FFF9F9F9"/>
+                                    <Style.Triggers>
+                                        <!-- 选中行高亮显示 -->
+                                        <Trigger Property="IsSelected" Value="True">
+                                            <Setter Property="Background" Value="#FFCCE5FF"/>
+                                            <Setter Property="BorderBrush" Value="#FF0078D4"/>
+                                            <Setter Property="BorderThickness" Value="2"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </DataGrid.RowStyle>
+                        </DataGrid>
+                    </DockPanel>
+
+                    <!-- 中间分隔线 -->
+                    <GridSplitter Grid.Column="1" Background="#FFDDDDDD" HorizontalAlignment="Stretch" />
+
+                    <!-- 右侧：新数据表格 -->
+                    <DockPanel Grid.Column="2">
+                        <Border DockPanel.Dock="Top" Background="#FFF5F5F5" Padding="5" BorderBrush="#FFDDDDDD" BorderThickness="0,0,0,1">
+                            <TextBlock Text="新版本数据" FontWeight="Bold" FontSize="14" />
+                        </Border>
+                        <DataGrid x:Name="NewDataGrid"
+                                  AutoGenerateColumns="False"
+                                  IsReadOnly="True"
+                                  CanUserAddRows="False"
+                                  CanUserDeleteRows="False"
+                                  CanUserReorderColumns="False"
+                                  GridLinesVisibility="All"
+                                  HeadersVisibility="Column"
+                                  VirtualizingPanel.IsVirtualizing="True"
+                                  VirtualizingPanel.VirtualizationMode="Recycling"
+                                  FrozenColumnCount="2"
+                                  EnableRowVirtualization="True">
+                            <DataGrid.RowStyle>
+                                <Style TargetType="DataGridRow">
+                                    <Setter Property="Background" Value="White"/>
+                                    <Style.Triggers>
+                                        <!-- 选中行高亮显示 -->
+                                        <Trigger Property="IsSelected" Value="True">
+                                            <Setter Property="Background" Value="#FFCCE5FF"/>
+                                            <Setter Property="BorderBrush" Value="#FF0078D4"/>
+                                            <Setter Property="BorderThickness" Value="2"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </DataGrid.RowStyle>
+                        </DataGrid>
+                    </DockPanel>
+                </Grid>
+
+                <!-- 上下对比模式：单个DataGrid，旧数据和新数据上下两行显示 -->
+                <DataGrid x:Name="VerticalComparisonDataGrid"
+                          AutoGenerateColumns="False"
+                          IsReadOnly="True"
+                          CanUserAddRows="False"
+                          CanUserDeleteRows="False"
+                          CanUserReorderColumns="False"
+                          GridLinesVisibility="All"
+                          HeadersVisibility="Column"
+                          VirtualizingPanel.IsVirtualizing="True"
+                          VirtualizingPanel.VirtualizationMode="Recycling"
+                          EnableRowVirtualization="True"
+                          FrozenColumnCount="2">
+                    <DataGrid.Style>
+                        <Style TargetType="DataGrid">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ViewModel.IsSideBySideMode}" Value="False">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGrid.Style>
+                    <DataGrid.RowStyle>
+                        <Style TargetType="DataGridRow">
+                            <Setter Property="BorderBrush" Value="#FFDDDDDD"/>
+                            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                            <Style.Triggers>
+                                <!-- 旧数据行 -->
+                                <DataTrigger Binding="{Binding RowVersion}" Value="旧">
+                                    <Setter Property="Background" Value="#FFF5F5F5"/>
+                                    <Setter Property="FontWeight" Value="Normal"/>
+                                </DataTrigger>
+                                <!-- 新数据行：背景不变，只有单元格级别的样式 -->
+                                <DataTrigger Binding="{Binding RowVersion}" Value="新">
+                                    <Setter Property="Background" Value="White"/>
+                                    <Setter Property="FontWeight" Value="Normal"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGrid.RowStyle>
+                </DataGrid>
+            </Grid>
+        </ui:Card>
+
+        <!-- 底部分页控制栏 -->
+        <ui:Card Grid.Row="2" Margin="5,0,5,0" Padding="5">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <!-- 左侧：状态信息 -->
+                <TextBlock Grid.Column="0" 
+                           Text="{Binding ViewModel.StatusMessage}" 
+                           VerticalAlignment="Center"
+                           Foreground="#FF666666"
+                           Margin="0,0,10,0" />
+
+                <!-- 中间：空白 -->
+
+                <!-- 右侧：分页控制 -->
+                <StackPanel Grid.Column="2" Orientation="Horizontal" 
+                            Visibility="{Binding ViewModel.HasComparisonResults, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <TextBlock Text="每页：" VerticalAlignment="Center" Margin="0,0,5,0" />
+                    <ComboBox SelectedValuePath="Tag"
+                              SelectedValue="{Binding ViewModel.PageSize}" 
+                              Width="80" 
+                              Margin="0,0,15,0">
+                        <ComboBoxItem Content="50" Tag="50" />
+                        <ComboBoxItem Content="100" Tag="100" IsSelected="True" />
+                        <ComboBoxItem Content="200" Tag="200" />
+                        <ComboBoxItem Content="500" Tag="500" />
+                    </ComboBox>
+
+                    <ui:Button Content="首页" 
+                               Command="{Binding ViewModel.FirstPageCommand}"
+                               IsEnabled="{Binding ViewModel.CanGoPreviousPage}"
+                               Width="50"
+                               Margin="0,0,3,0" />
+                    <ui:Button Content="上一页" 
+                               Command="{Binding ViewModel.PreviousPageCommand}"
+                               IsEnabled="{Binding ViewModel.CanGoPreviousPage}"
+                               Width="60"
+                               Margin="0,0,10,0" />
+
+                    <TextBlock VerticalAlignment="Center" Margin="0,0,5,0">
+                        <Run Text="第" />
+                        <Run Text="{Binding ViewModel.CurrentPage}" FontWeight="Bold" />
+                        <Run Text="/" />
+                        <Run Text="{Binding ViewModel.TotalPages}" />
+                        <Run Text="页" />
+                    </TextBlock>
+
+                    <ui:Button Content="下一页" 
+                               Command="{Binding ViewModel.NextPageCommand}"
+                               IsEnabled="{Binding ViewModel.CanGoNextPage}"
+                               Width="60"
+                               Margin="10,0,3,0" />
+                    <ui:Button Content="尾页" 
+                               Command="{Binding ViewModel.LastPageCommand}"
+                               IsEnabled="{Binding ViewModel.CanGoNextPage}"
+                               Width="50" />
+                </StackPanel>
+            </Grid>
+        </ui:Card>
+    </Grid>
+</Page>

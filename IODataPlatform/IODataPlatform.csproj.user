@@ -1,0 +1,187 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <_LastSelectedProfileId>F:\Code\io-management-platform---wpfui\IODataPlatform\Properties\PublishProfiles\ClickOnceProfile7.pubxml</_LastSelectedProfileId>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Update="Views\Pages\DepXT1Page.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\Pages\HomePage.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\Pages\OtherFunctionPage.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\SubPages\AQJ\ConfigSignalGroupDetailPage.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\SubPages\AQJ\ConfigSignalGroupPage.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\SubPages\AQJ\ImportPage.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\SubPages\Common\CommonDuanjiePublishPage.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\SubPages\Common\CommonMatchMajor.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\SubPages\Common\CommonPublishPage.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\SubPages\Common\SelectExcelSheetDialog.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\SubPages\OtherFunction\ExtractExcelToNetListPage.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\SubPages\Project\MajorPage.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\SubPages\Project\SubProjectPage.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\SubPages\XT1\ImportPage.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\SubPages\Common\CabinetAllocatedPage.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\SubPages\Common\ExtractPdfPage.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\SubPages\XT2\UploadExcelDataPage.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\SubPages\XT2\ImportPage.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\Pages\DataComparePage.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\Pages\DepXT2Page.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\SubPages\Common\CommonConfigTablePage.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\Windows\LoginWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="ResourceDictionaries\DataGridStyles.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="ResourceDictionaries\Index.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Pages\DepYJPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Pages\HomePage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Pages\OtherFunctionPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Pages\PaperPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Pages\DepAQJPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Pages\FormulaEditorPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Pages\CablePage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Pages\DepXT1Page.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Pages\TerminationPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Pages\DataAssetCenterPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\SubPages\AQJ\ConfigSignalGroupDetailPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\SubPages\AQJ\ConfigSignalGroupPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\SubPages\AQJ\ImportPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\SubPages\Cable\PublishPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\SubPages\Cable\MatchPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\SubPages\Common\CommonDuanjiePublishPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\SubPages\Common\CommonMatchMajor.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\SubPages\Common\CommonPublishPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\SubPages\Common\SelectExcelSheetDialog.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\SubPages\OtherFunction\ExtractExcelToNetListPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\SubPages\Paper\UploadPaperPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\SubPages\Paper\EditDevicePage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\SubPages\Project\MajorPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\SubPages\Project\SubProjectPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\SubPages\Termination\ImportPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\SubPages\XT1\ImportPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\SubPages\Common\CabinetAllocatedPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\SubPages\Common\ExtractPdfPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\SubPages\XT2\UploadExcelDataPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\SubPages\XT2\ImportPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Pages\DataComparePage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Pages\DepXT2Page.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\SubPages\Common\CommonConfigTablePage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\SubPages\YJ\ImportPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Windows\LoginWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,158 @@
+<Window x:Class="IODataPlatform.Views.Windows.ValveSortingWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+        mc:Ignorable="d"
+        Title="阀门排序导入"
+        Height="700"
+        Width="1000"
+        WindowStartupLocation="CenterOwner"
+        Background="{DynamicResource ApplicationBackgroundBrush}">
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- 标题说明 -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,15">
+            <TextBlock Text="阀门排序数据导入" 
+                       FontSize="18" 
+                       FontWeight="SemiBold"
+                       Margin="0,0,0,10"/>
+            <TextBlock Text="功能说明：从Excel导入阀门编号和气口顺序，自动匹配到IO数据的DP阀位顺序字段"
+                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                       TextWrapping="Wrap"/>
+        </StackPanel>
+
+        <!-- 操作按钮区 -->
+        <StackPanel Grid.Row="1" 
+                    Orientation="Horizontal" 
+                    Margin="0,0,0,15">
+            <ui:Button x:Name="DownloadTemplateButton"
+                       Content="下载模板"
+                       Icon="{ui:SymbolIcon DocumentArrowDown24}"
+                       Appearance="Secondary"
+                       Margin="0,0,10,0"
+                       Click="DownloadTemplateButton_Click"/>
+            <ui:Button x:Name="SelectFileButton"
+                       Content="选择文件"
+                       Icon="{ui:SymbolIcon FolderOpen24}"
+                       Appearance="Secondary"
+                       Margin="0,0,10,0"
+                       Click="SelectFileButton_Click"/>
+            <ui:Button x:Name="ProcessButton"
+                       Content="处理数据"
+                       Icon="{ui:SymbolIcon Play24}"
+                       Appearance="Primary"
+                       IsEnabled="False"
+                       Click="ProcessButton_Click"/>
+        </StackPanel>
+
+        <!-- Tab控件 -->
+        <TabControl Grid.Row="2" 
+                    x:Name="DataTabControl"
+                    Margin="0,0,0,15">
+            <!-- 阀门数据Tab -->
+            <TabItem x:Name="ValveDataTab" Header="阀门数据">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <ui:TextBlock Grid.Row="0" 
+                                  x:Name="ValveDataCountText"
+                                  Text="阀门数据：0条" 
+                                  Margin="10"
+                                  FontWeight="SemiBold"/>
+
+                    <DataGrid Grid.Row="1" 
+                              x:Name="ValveDataGrid"
+                              AutoGenerateColumns="True"
+                              IsReadOnly="True"
+                              GridLinesVisibility="All"
+                              CanUserReorderColumns="True"
+                              CanUserResizeColumns="True"
+                              CanUserSortColumns="True"
+                              SelectionMode="Single"
+                              AlternatingRowBackground="{DynamicResource SubtleFillColorSecondaryBrush}"/>
+                </Grid>
+            </TabItem>
+
+            <!-- 匹配结果Tab -->
+            <TabItem x:Name="MatchResultTab" Header="匹配结果">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.Row="0" 
+                                Orientation="Horizontal" 
+                                Margin="10">
+                        <ui:TextBlock x:Name="MatchedCountText"
+                                      Text="匹配成功：0条" 
+                                      Margin="0,0,20,0"
+                                      FontWeight="SemiBold"
+                                      Foreground="Green"/>
+                        <ui:TextBlock x:Name="UnmatchedCountText"
+                                      Text="未匹配：0条"
+                                      FontWeight="SemiBold"
+                                      Foreground="OrangeRed"/>
+                    </StackPanel>
+
+                    <DataGrid Grid.Row="1" 
+                              x:Name="MatchResultGrid"
+                              AutoGenerateColumns="True"
+                              IsReadOnly="True"
+                              GridLinesVisibility="All"
+                              CanUserReorderColumns="True"
+                              CanUserResizeColumns="True"
+                              CanUserSortColumns="True"
+                              SelectionMode="Single"
+                              AlternatingRowBackground="{DynamicResource SubtleFillColorSecondaryBrush}"/>
+                </Grid>
+            </TabItem>
+        </TabControl>
+
+        <!-- 状态栏 -->
+        <Border Grid.Row="3" 
+                Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+                BorderThickness="1"
+                BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
+                CornerRadius="4"
+                Padding="10"
+                Margin="0,0,0,15">
+            <ui:TextBlock x:Name="StatusText" 
+                          Text="请先下载模板或选择已有的阀门数据文件"
+                          Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+        </Border>
+
+        <!-- 底部按钮 -->
+        <StackPanel Grid.Row="4" 
+                    Orientation="Horizontal" 
+                    HorizontalAlignment="Right">
+            <ui:Button x:Name="ConfirmButton"
+                       Content="确认导入"
+                       Icon="{ui:SymbolIcon Checkmark24}"
+                       Appearance="Primary"
+                       Margin="0,0,10,0"
+                       MinWidth="100"
+                       IsEnabled="False"
+                       Click="ConfirmButton_Click"/>
+            <ui:Button x:Name="CancelButton"
+                       Content="取消"
+                       Icon="{ui:SymbolIcon Dismiss24}"
+                       Appearance="Secondary"
+                       MinWidth="100"
+                       Click="CancelButton_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>

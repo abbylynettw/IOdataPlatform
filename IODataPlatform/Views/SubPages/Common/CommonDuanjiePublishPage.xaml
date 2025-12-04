@@ -1,0 +1,89 @@
+﻿<Page x:Class="IODataPlatform.Views.SubPages.Common.CommonDuanjiePublishPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="clr-namespace:IODataPlatform.Views.SubPages.Common"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      ui:NavigationView.HeaderContent="{Binding ViewModel.Title}"
+      d:DataContext="{d:DesignInstance Type=local:PublishTerminationViewModel}"
+      mc:Ignorable="d"
+      d:DesignHeight="450"
+      d:DesignWidth="800"
+      Title="CommonPublishPage">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- 用户输入区域 -->
+        <StackPanel Grid.ColumnSpan="100"
+                    Orientation="Horizontal"
+                    Margin="0,0,0,10">
+            <ui:TextBox Margin="10,0,0,0"
+                        PlaceholderText="输入发布版本"
+                        Text="{Binding ViewModel.PublishedVersion}"
+                        Width="120" />
+
+            <ui:TextBox Margin="10,0,0,0"
+                        Text="{Binding ViewModel.Publisher}"
+                        PlaceholderText="输入发布人"
+                        Width="120" />
+            <ui:TextBox Margin="10,0,0,0"
+                        Text="{Binding ViewModel.PublishedReason}"
+                        AcceptsReturn="True"
+                        PlaceholderText="输入发布原因"
+                        Width="700" />
+            <ui:Button Margin="10,0,0,0"
+                       Content="确认发布"
+                       Appearance="Primary"
+                       Command="{Binding ViewModel.PublishCommand}" />
+        </StackPanel>
+
+        <!-- 表格显示区域 -->
+
+        <ui:DataGrid ItemsSource="{Binding ViewModel.PublishTableData}"
+                     Grid.Row="1"
+                     Style="{StaticResource DataGridStyle}">
+            <ui:DataGrid.Columns>
+                <DataGridTextColumn Header="子项目Id"
+                                    Binding="{Binding SubProjectId}"
+                                    Width="auto" />
+                <DataGridTextColumn Header="历史发布版本"
+                                    Binding="{Binding PublishedVersion}"
+                                    Width="auto" />
+                <DataGridTextColumn Header="发布时间"
+                                    Binding="{Binding PublishedTime}"
+                                    Width="auto" />
+                <DataGridTextColumn Header="发布人"
+                                    Binding="{Binding Publisher}"
+                                    Width="auto" />
+                <DataGridTextColumn Header="发布原因"
+                                    Binding="{Binding PublishedReason}"
+                                    Width="*" />
+                <DataGridTemplateColumn Width="auto"
+                                        Header="操作">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <ui:Button Content="覆盖当前版本"
+                                           Appearance="Caution"
+                                           Margin="2"
+                                           CommandParameter="{Binding}"
+                                           Command="{Binding ViewModel.ImportPublishCommand, RelativeSource={RelativeSource AncestorType=local:CommonDuanjiePublishPage}}" />
+                                <ui:Button Icon="{ui:SymbolIcon Delete24}"
+                                           Appearance="Caution"
+                                           Margin="2"
+                                           CommandParameter="{Binding}"
+                                           Command="{Binding ViewModel.DeletePublishCommand, RelativeSource={RelativeSource AncestorType=local:CommonDuanjiePublishPage}}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+            </ui:DataGrid.Columns>
+        </ui:DataGrid>
+    </Grid>
+</Page>

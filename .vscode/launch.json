@@ -1,0 +1,39 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "启动 IODataPlatform",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/IODataPlatform/bin/Debug/net8.0-windows/IODataPlatform.exe",
+            "args": [],
+            "cwd": "${workspaceFolder}/IODataPlatform",
+            "console": "internalConsole",
+            "stopAtEntry": false,
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "启动 WebApi",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build-webapi",
+            "program": "${workspaceFolder}/IODataPlatform.WebApi/bin/Debug/net8.0/IODataPlatform.WebApi.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/IODataPlatform.WebApi",
+            "stopAtEntry": false,
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            },
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+            }
+        },
+        {
+            "name": "附加到进程",
+            "type": "coreclr",
+            "request": "attach"
+        }
+    ]
+}

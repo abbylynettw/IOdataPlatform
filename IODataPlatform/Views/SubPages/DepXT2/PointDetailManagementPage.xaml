@@ -1,0 +1,194 @@
+<Page x:Class="IODataPlatform.Views.SubPages.DepXT2.PointDetailManagementPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:ly="http://lysoft/wpf"
+      xmlns:local="clr-namespace:IODataPlatform.Views.SubPages.DepXT2"
+      mc:Ignorable="d" 
+      ui:NavigationView.HeaderContent="点详情管理"
+      d:DesignHeight="600" d:DesignWidth="900"
+      Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+      ScrollViewer.VerticalScrollBarVisibility="Disabled"
+      d:DataContext="{d:DesignInstance local:PointDetailManagementPage, IsDesignTimeCreatable=False}">
+
+    <StackPanel Margin="10">
+
+        <!-- 顶部操作栏 -->
+        <StackPanel Height="60" Margin="0,0,0,5">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="5"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="5"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="5"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="10"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" Text="点详情统计与管理" FontSize="18" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                
+                <ui:Button Grid.Column="1" 
+                           Content="添加报警点"
+                           Command="{Binding ViewModel.AddAllPointsCommand}"
+                           CommandParameter="Alarm"
+                           Appearance="Primary"/>
+                
+                <ui:Button Grid.Column="3" 
+                           Content="删除报警点"
+                           Command="{Binding ViewModel.DeleteAllPointsCommand}"
+                           CommandParameter="Alarm"
+                           Appearance="Danger"/>
+                
+                <ui:Button Grid.Column="5" 
+                           Content="添加备用点"
+                           Command="{Binding ViewModel.AddAllPointsCommand}"
+                           CommandParameter="BackUp"
+                           Appearance="Secondary"/>
+                
+                <ui:Button Grid.Column="7" 
+                           Content="删除备用点"
+                           Command="{Binding ViewModel.DeleteAllPointsCommand}"
+                           CommandParameter="BackUp"
+                           Appearance="Danger"/>
+                
+                <ui:Button Grid.Column="9" 
+                           Icon="{ui:SymbolIcon ArrowSync24}" 
+                           Command="{Binding ViewModel.RefreshStatisticsCommand}"
+                           ToolTip="刷新统计信息"/>
+            </Grid>
+        </StackPanel>
+
+        <!-- 机柜列表区 -->
+        <Border Height="440"
+                BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}" 
+                BorderThickness="1" 
+                CornerRadius="4"
+                Background="{DynamicResource LayerFillColorDefaultBrush}"
+                Margin="0,0,0,5">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <ItemsControl ItemsSource="{Binding ViewModel.CabinetAlarmInfos}" Margin="10">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <ui:CardExpander Margin="0,0,0,8">
+                                <ui:CardExpander.Header>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="150"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <!-- 机柜名称 -->
+                                        <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                                            <ui:SymbolIcon Symbol="Archive24" FontSize="16" Margin="0,0,8,0"/>
+                                            <TextBlock Text="{Binding CabinetName}" 
+                                                       FontSize="15" 
+                                                       FontWeight="Bold"
+                                                       VerticalAlignment="Center"/>
+                                        </StackPanel>
+
+                                        <!-- 统计信息 -->
+                                        <StackPanel Grid.Column="1" Orientation="Vertical" VerticalAlignment="Center" Margin="10,5">
+                                            <!-- 第一行：报警点统计 -->
+                                            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                                <TextBlock Text="报警：" FontSize="11" Foreground="Gray" Margin="0,0,5,0"/>
+                                                <TextBlock Text="通讯 " FontSize="11" Foreground="#1976D2"/>
+                                                <TextBlock Text="{Binding CommunicationAlarmCount}" FontSize="11" FontWeight="Bold" Foreground="#1976D2"/>
+                                                <TextBlock Text=" | 硬点 " FontSize="11" Foreground="#F57C00" Margin="8,0,0,0"/>
+                                                <TextBlock Text="{Binding HardwareAlarmCount}" FontSize="11" FontWeight="Bold" Foreground="#F57C00"/>
+                                                
+                                                <TextBlock Text=" | 备用 " FontSize="11" Foreground="Gray" Margin="12,0,0,0"/>
+                                                <TextBlock Text="{Binding BackupPointsCount}" FontSize="11" FontWeight="Bold"/>
+                                                <TextBlock Text=" | 一般 " FontSize="11" Foreground="Gray" Margin="8,0,0,0"/>
+                                                <TextBlock Text="{Binding NormalPointsCount}" FontSize="11" FontWeight="Bold"/>
+                                                <TextBlock Text=" | 未分配 " FontSize="11" Foreground="#D32F2F" Margin="8,0,0,0"/>
+                                                <TextBlock Text="{Binding UnsetPointsCount}" FontSize="11" FontWeight="Bold" Foreground="#D32F2F"/>
+                                            </StackPanel>
+                                            
+                                            <!-- 第二行：总点数和未分配端子板 -->
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="总点数：" FontSize="11" Foreground="Gray"/>
+                                                <TextBlock Text="{Binding TotalPointsCount}" FontSize="11" FontWeight="Bold" Foreground="#388E3C"/>
+                                                <TextBlock Text=" | 未分配端子板：" FontSize="11" Foreground="Gray" Margin="12,0,0,0"/>
+                                                <TextBlock Text="{Binding UnsetBoardsCount}" FontSize="11" FontWeight="Bold"/>
+                                            </StackPanel>
+                                        </StackPanel>
+
+                                        <!-- 操作按钮 -->
+                                        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                                            <ui:Button Icon="{ui:SymbolIcon Add20}" 
+                                                       Command="{Binding DataContext.ViewModel.AddCabinetPointsCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                                                       CommandParameter="{Binding CabinetName}"
+                                                       Appearance="Secondary"
+                                                       ToolTip="添加报警点"
+                                                       Margin="0,0,5,0"/>
+                                            <ui:Button Icon="{ui:SymbolIcon Delete20}" 
+                                                       Command="{Binding DataContext.ViewModel.DeleteCabinetPointsCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                                                       CommandParameter="{Binding CabinetName}"
+                                                       Appearance="Danger"
+                                                       ToolTip="删除报警点"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </ui:CardExpander.Header>
+                                
+                                <!-- 展开内容：冗余率详情 -->
+                                <StackPanel Margin="10">
+                                    <TextBlock Text="冗余率详情" FontSize="12" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                                    <ItemsControl ItemsSource="{Binding RedundancyRates}">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <WrapPanel/>
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border Background="{DynamicResource CardBackgroundFillColorDefaultBrush}" 
+                                                        BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
+                                                        BorderThickness="1"
+                                                        CornerRadius="4" 
+                                                        Padding="8,4" 
+                                                        Margin="0,0,8,4">
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <TextBlock Text="{Binding CardType}" FontSize="11" Margin="0,0,5,0"/>
+                                                        <TextBlock Text=":" FontSize="11" Margin="0,0,3,0"/>
+                                                        <TextBlock Text="{Binding Rate}" FontSize="11" FontWeight="Bold"/>
+                                                        <TextBlock Text=" %" FontSize="11"/>
+                                                    </StackPanel>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </ui:CardExpander>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </Border>
+
+        <!-- 日志显示区 -->
+        <Border Height="120" 
+                Margin="0"
+                BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}" 
+                BorderThickness="1" 
+                CornerRadius="4"
+                Background="{DynamicResource LayerFillColorDefaultBrush}">
+            <DockPanel Margin="10">
+                <TextBlock DockPanel.Dock="Top" Text="操作日志" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <TextBlock Text="{Binding ViewModel.LogText}" 
+                               FontFamily="Cascadia Code, Consolas, Courier New"
+                               FontSize="11"
+                               TextWrapping="Wrap"
+                               LineHeight="18"/>
+                </ScrollViewer>
+            </DockPanel>
+        </Border>
+    </StackPanel>
+</Page>
